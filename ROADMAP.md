@@ -1,600 +1,308 @@
 # MigrationTool Roadmap
 
-This document outlines the planned features and improvements for MigrationTool.
+This document outlines the current status and planned features for MigrationTool.
 
 **Last Updated:** January 8, 2026  
-**Current Version:** 1.0.0 (Blazor Prototype)  
-**Next Version:** 2.0.0 (React + gRPC Architecture)
+**Current Version:** 1.1.0 (CLI + Core)  
+**Next Version:** 2.0.0 (React Frontend)
 
 ---
 
-## Version 1.0.0 (Completed - January 2026)
+## Current Status (v1.1.0)
 
-**Blazor Server Prototype - Proof of Concept**
+### ✅ Core Library - COMPLETED
 
-### Core Features ✅
-- [x] Core analyzers (Solution, Project, Code) using Roslyn
-- [x] Solution parsing with project discovery
-- [x] C# source file analysis with test detection
-- [x] Project reference and package reference tracking
-- [x] 160+ unit and integration tests
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Solution Graph | ✅ Done | In-memory graph model of solution dependencies |
+| Graph Builder | ✅ Done | Build graph using MSBuildWorkspace + Roslyn |
+| Impact Analyzer | ✅ Done | Predict impact of move/rename/delete operations |
+| File Operations | ✅ Done | Move, copy, delete, rename with namespace updates |
+| Folder Operations | ✅ Done | Recursive folder operations |
+| Namespace Rewriter | ✅ Done | Roslyn-based namespace updates |
+| Class Renamer | ✅ Done | Rename types including constructors |
+| Cross-Solution Migration | ✅ Done | Migrate between different solutions |
+| Using Management | ✅ Done | Add/remove using directives |
 
-### UI - Blazor Server ✅
-- [x] Dashboard with statistics and filtering
-- [x] Project Explorer with 5 view modes (Tree, Files, List, Classes, Tests)
-- [x] Migration Planner with 8 Quick Action templates
-- [x] Analysis page (Namespaces, Conflicts, Packages, Dependencies)
-- [x] SVG-based Dependency Graph
-- [x] TreeView and FileDetail components
-- [x] Multi-language support (EN, CS, PL, UK)
+### ✅ CLI Tool - COMPLETED
 
-### Migration Operations ✅
-- [x] Move File/Folder with auto-reference updates
-- [x] Copy File/Folder (preserves originals)
-- [x] Rename Namespace using Roslyn
-- [x] Add/Remove Project References
-- [x] Update Project Properties
-- [x] Migration plan validation
-- [x] Execution with real-time progress tracking
-- [x] Export/Import plans as JSON
-- [x] Rollback support
+| Command | Status | Description |
+|---------|--------|-------------|
+| `analyze-solution` | ✅ Done | Analyze solution structure |
+| `analyze-graph` | ✅ Done | Build dependency graph |
+| `analyze-impact` | ✅ Done | Impact analysis |
+| `move-file` | ✅ Done | Move file with namespace update |
+| `copy-file` | ✅ Done | Copy file |
+| `rename-file` | ✅ Done | Rename file and class |
+| `delete-file` | ✅ Done | Delete with reference check |
+| `move-folder` | ✅ Done | Move folder recursively |
+| `copy-folder` | ✅ Done | Copy folder |
+| `update-namespace` | ✅ Done | Update namespaces |
+| `find-usages` | ✅ Done | Find type usages |
 
-### Developer Experience ✅
-- [x] Debug auto-load (Framework.sln - 46 projects)
-- [x] Drag & Drop UI for solution loading
-- [x] Recent paths list
-- [x] Professional UI with gradients and animations
-- [x] Toast notifications
-- [x] Execution modal with step tracking
+### ✅ Testing - COMPLETED
 
-**Achievements:**
-- Successfully tested with 46-project solution
-- Professional UI design established
-- All core migration operations implemented
-- Comprehensive analysis features
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Test Fixtures | ✅ Done | Humanizer project as test data |
+| Graph Tests | ✅ Done | 271 types, 236 files analyzed |
+| Impact Tests | ✅ Done | Move/rename/delete scenarios |
+| Auto-cleanup | ✅ Done | MSBuild target cleans before tests |
 
-**Lessons Learned:**
-- Blazor Server works but has limitations (UI ecosystem, hot reload speed)
-- Manual SVG graph implementation is complex (340 LOC)
-- CSS became large (2894 lines, split to 3 files)
-- SignalR is good for real-time but gRPC streaming is better
-- React ecosystem would provide better long-term ROI
+### 📊 Test Results (Humanizer Project)
+
+```
+Projects:    2
+Files:       236
+Types:       271
+Namespaces:  26
+Inheritance: 110
+Interfaces:  40
+Total Edges: 985
+```
 
 ---
 
 ## Version 2.0.0 (Planned - Q1-Q2 2026)
 
-**React + gRPC Architecture - Production Implementation**
+**React Frontend with REST/gRPC Backend**
 
-> **Architecture Decision:** Migrate to React frontend with .NET gRPC backend for better performance, modern UI ecosystem, and improved developer experience. See `docs/ARCHITECTURE_DECISION.md` for detailed analysis.
+### Phase 1: Backend API (4-6 hours)
 
-### Phase 1: Backend - gRPC Server (6-8 hours)
+- [ ] Create `MigrationTool.Api` project (ASP.NET Core)
+- [ ] REST endpoints for:
+  - `GET /api/graph` - Get solution graph
+  - `GET /api/impact` - Get impact analysis
+  - `POST /api/migrate` - Execute migration
+- [ ] Optional: gRPC for streaming progress
+- [ ] Swagger/OpenAPI documentation
 
-**Goal:** Create .NET gRPC server that exposes Core functionality
+### Phase 2: React Frontend Setup (2-3 hours)
 
-- [ ] Create `MigrationTool.GrpcServer` project
-- [ ] Define Protocol Buffer contracts (`.proto` files):
-  - `migration_service.proto` - Migration operations
-  - `analysis_service.proto` - Solution/project analysis  
-  - `models.proto` - Shared data models
-- [ ] Implement gRPC services:
-  - `MigrationService` - Execute migrations with server-side streaming
-  - `AnalysisService` - Analyze solutions, projects, files
-  - `FileService` - File/folder operations
-- [ ] Add gRPC-Web support (CORS for browser)
-- [ ] Embed React build for single-exe deployment
-- [ ] Reuse existing `MigrationTool.Core` (Roslyn analyzers) ✅
-
-**Benefits:**
-- Binary protocol (3x smaller payload than JSON)
-- Server-side streaming for real-time progress
-- Type-safe code generation (C# + TypeScript)
-- HTTP/2 multiplexing
-
-### Phase 2: Frontend - React Setup (2-3 hours)
-
-**Goal:** Modern React frontend with TypeScript
-
-- [ ] Initialize Vite + React + TypeScript project
-- [ ] Install core dependencies:
-  - `grpc-web` - gRPC client
-  - `@tanstack/react-table` - Advanced data tables
-  - `reactflow` - Interactive dependency graph
+- [ ] Vite + React + TypeScript project
+- [ ] Dependencies:
+  - `reactflow` - Dependency graph visualization
+  - `@tanstack/react-table` - Data tables
   - `zustand` - State management
-  - `react-router-dom` - Routing
-  - `react-hook-form` - Form handling
-- [ ] Setup Shadcn/ui component library
-- [ ] Generate TypeScript gRPC clients from `.proto`
-- [ ] Configure Vite for development and production builds
+  - `tailwindcss` - Styling
+- [ ] API client generation from OpenAPI
 
-**Benefits:**
-- 50ms hot reload (vs 2-5s in Blazor)
-- Modern UI component ecosystem
-- Type-safe API client (auto-generated)
-- Professional components out-of-the-box
+### Phase 3: UI Pages (8-12 hours)
 
-### Phase 3: UI Pages Migration (8-12 hours)
-
-**Migrate features from Blazor prototype:**
-
-#### Dashboard (2 hours)
+#### Dashboard
 - [ ] Solution statistics cards
-- [ ] Project list with TanStack Table (sorting, filtering built-in!)
-- [ ] Project type breakdown chart
-- [ ] Dependencies overview
-- [ ] Search and filter UI
+- [ ] Project list with filtering
+- [ ] Quick actions
 
-**From Blazor:** 243 lines Razor  
-**To React:** ~150 lines TSX (TanStack handles complexity)
+#### Graph Explorer
+- [ ] Interactive dependency graph (React Flow)
+- [ ] Zoom, pan, auto-layout
+- [ ] Node details on click
+- [ ] Filter by type (projects, files, types)
 
-#### Explorer (3 hours)
-- [ ] Project list with hierarchical grouping
-- [ ] File tree view (React component library)
-- [ ] File detail panel (classes, methods, usings)
-- [ ] Multiple view modes (Tree, Files, List, Classes, Tests)
-- [ ] File selection for migration planning
+#### Impact Analyzer
+- [ ] Select operation type (move, rename, delete)
+- [ ] Select target (type, file, namespace)
+- [ ] Visual impact preview
+- [ ] Affected files list
 
-**From Blazor:** 655 lines + TreeView 240 lines + FileDetail 416 lines = 1311 lines  
-**To React:** ~400 lines (libraries handle tree rendering)
+#### Migration Planner
+- [ ] Create migration plan
+- [ ] Add steps (drag & drop)
+- [ ] Validate plan
+- [ ] Execute with progress
 
-#### Analysis (2 hours)
-- [ ] Tab navigation (Namespaces, Conflicts, Packages, Dependencies)
-- [ ] **Dependency Graph with React Flow** 🎯
-  - Drag & drop nodes
-  - Auto-layout algorithms (dagre, elk)
-  - Zoom, pan, minimap
-  - Export to PNG
-- [ ] Namespace analysis tables
-- [ ] Conflict detection
-- [ ] Package consolidation view
+### Phase 4: Polish (4-6 hours)
 
-**From Blazor:** 480 lines + DependencyGraph 340 lines = 820 lines  
-**To React:** ~200 lines (React Flow does 85% of work!)
-
-#### Migration Planner (3 hours)
-- [ ] 3-panel layout (Quick Actions, Plan Editor, Step Details)
-- [ ] 8 Quick Action templates
-- [ ] Step cards with inline editing
-- [ ] Drag-to-reorder steps (React DnD)
-- [ ] Validation panel
-- [ ] **Execution modal with gRPC streaming progress** 🎯
-- [ ] Export/Import JSON plans
-
-**From Blazor:** 872 lines  
-**To React:** ~300 lines (React Hook Form + React DnD)
-
-#### Settings (1 hour)
-- [ ] Solution path input with file picker
-- [ ] Drag & drop zone
-- [ ] Recent paths list
-- [ ] Language selector
-- [ ] Theme toggle (Dark mode)
-
-### Phase 4: Polish & Integration (4-6 hours)
-
-- [ ] Error boundaries and error handling
-- [ ] Loading states and skeletons
-- [ ] Toast notifications
-- [ ] Keyboard shortcuts (Cmd+K command palette)
-- [ ] Accessibility (WCAG AA compliance)
-- [ ] E2E tests with Playwright
-- [ ] Build and packaging scripts
-- [ ] User documentation
+- [ ] Error handling
+- [ ] Loading states
+- [ ] Dark mode
+- [ ] Keyboard shortcuts
+- [ ] Export/import plans
 
 ---
 
 ## Version 2.1.0 (Planned - Q2 2026)
 
-### Enhanced Features
+### Reference Updates (Hard)
 
-- [ ] **File System Watching** (gRPC streaming)
-  - Auto-detect code changes
-  - Re-analyze affected files
-  - Live UI updates
-- [ ] **Batch Operations**
-  - Multi-file rename patterns
-  - Bulk namespace updates
-  - Mass project reference updates
-- [ ] **Migration History**
-  - Track all executed migrations
-  - Rollback to any point
-  - Audit log
-- [ ] **Git Integration**
-  - Auto-commit after migration
-  - Create feature branches
-  - Diff preview before execution
+When moving a type, automatically update all files that reference it:
+- [ ] Find all files using the type
+- [ ] Update `using` directives
+- [ ] Update fully qualified names
+- [ ] Handle partial classes
 
-### Desktop Integration
+### Execution Plan
 
-- [ ] **Tauri Wrapper** (Rust + React)
-  - Native file dialogs
-  - System tray integration
-  - Auto-updater
-  - Smaller binary than Electron
-- [ ] **VS Code Extension**
-  - Consume same gRPC API
-  - In-editor migration planning
-  - Code lens for migrations
+Orchestrated migration with rollback:
+- [ ] Plan validation
+- [ ] Step-by-step execution
+- [ ] Progress tracking
+- [ ] Rollback on failure
+- [ ] Execution log
 
----
+### Enhanced Analysis
 
-## Version 2.2.0 (Planned - Q3 2026)
-
-### AI-Powered Features
-
-- [ ] AI migration plan suggestions (Claude/GPT)
-- [ ] Smart namespace recommendations
-- [ ] Automatic categorization
-- [ ] Code smell detection
-- [ ] Migration complexity estimation
-
-### Advanced Refactoring
-
-- [ ] Rename symbols across solution (Roslyn)
-- [ ] Extract interface from class
-- [ ] Move class to new file
-- [ ] Split large files
-- [ ] Partial class management
-- [ ] Convert to record/struct
+- [ ] Full semantic analysis (who calls what)
+- [ ] Breaking change detection
+- [ ] Circular dependency detection
+- [ ] Package consolidation suggestions
 
 ---
 
 ## Version 3.0.0 (Future)
 
-### Multi-Language Support
+### AI-Powered Features
 
-- [ ] VB.NET project support
-- [ ] F# project support
-- [ ] Mixed-language solutions
-- [ ] .NET Framework → .NET 9 migration helpers
+- [ ] Migration plan suggestions (Claude/GPT)
+- [ ] Smart namespace recommendations
+- [ ] Code smell detection
+- [ ] Complexity estimation
 
-### Cloud Features (Optional)
+### Advanced Refactoring
 
-- [ ] Cloud storage for migration plans
-- [ ] Team collaboration
-- [ ] Migration plan marketplace
-- [ ] Analytics and insights
+- [ ] Extract interface from class
+- [ ] Split large files
+- [ ] Convert to record/struct
+- [ ] Partial class management
 
----
+### Integrations
 
-## Performance Goals
-
-| Version | Solution Size | Analysis Time | Migration Time | UI Responsiveness |
-|---------|---------------|---------------|----------------|-------------------|
-| 1.0.0 (Blazor) | 46 projects | ~2s | ~5s | Good (SignalR) |
-| 2.0.0 (React+gRPC) | 46 projects | ~0.5s | ~2s | Excellent (streaming) |
-| 2.1.0 | 100 projects | ~1s | ~5s | Excellent |
-| 3.0.0 | 500 projects | ~5s | ~30s | Excellent |
-
-**Target:** React + gRPC version should be **3-5x faster** than Blazor
+- [ ] VS Code extension
+- [ ] Visual Studio extension
+- [ ] Git integration (auto-commit)
+- [ ] CI/CD pipeline support
 
 ---
 
-## Technology Stack Evolution
+## Architecture
 
-### Version 1.0.0 (Current - Blazor)
+### Current (v1.1.0)
+
 ```
-Frontend: Blazor Server (Razor components)
-Backend: ASP.NET Core + SignalR
-Core: MigrationTool.Core (Roslyn)
-UI Libs: Limited (manual implementations)
-Deployment: Single ASP.NET app
+┌─────────────────────────────────────┐
+│   CLI (System.CommandLine)          │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│   MigrationTool.Core                │
+│   ├── Graph (SolutionGraph)         │
+│   ├── Services (FileOps, Migration) │
+│   └── Rewriters (Roslyn)            │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│   Roslyn + MSBuild                  │
+│   (Code analysis & manipulation)    │
+└─────────────────────────────────────┘
 ```
 
-### Version 2.0.0 (Planned - React + gRPC)
-```
-Frontend: React 18 + TypeScript + Vite
-UI Libs: Shadcn/ui, React Flow, TanStack Table
-Backend: ASP.NET Core 9 gRPC Server
-Protocol: Protocol Buffers (binary)
-Core: MigrationTool.Core (UNCHANGED - Roslyn)
-Communication: gRPC-Web with streaming
-Deployment: Single .exe with embedded React build
-```
+### Planned (v2.0.0)
 
-**Migration Time:** 20-29 hours  
-**Long-term ROI:** 3x faster development, better UX
+```
+┌─────────────────────────────────────┐
+│   React Frontend                    │
+│   (TypeScript, React Flow)          │
+└────────────┬────────────────────────┘
+             │ REST/gRPC
+┌────────────▼────────────────────────┐
+│   ASP.NET Core API                  │
+│   (Controllers, gRPC services)      │
+└────────────┬────────────────────────┘
+             │
+┌────────────▼────────────────────────┐
+│   MigrationTool.Core (UNCHANGED)    │
+└─────────────────────────────────────┘
+```
 
 ---
 
-## Dependencies
+## Technology Stack
 
-### Current (Blazor - v1.0.0)
+### Current
 - .NET 9.0
-- Microsoft.CodeAnalysis.CSharp 4.12.0
-- Microsoft.AspNetCore.Components 9.0.0
-- CommunityToolkit.Mvvm 8.4.0 (MAUI)
+- Roslyn (Microsoft.CodeAnalysis) 4.12.0
+- MSBuild (Microsoft.Build) 17.x
+- System.CommandLine 2.0
+- xUnit + FluentAssertions
 
-### Planned (React + gRPC - v2.0.0)
+### Planned (v2.0.0)
+- React 18 + TypeScript 5
+- Vite 5
+- React Flow 11
+- TanStack Table 8
+- Tailwind CSS 3
+- ASP.NET Core 9 (API)
 
-**Backend:**
-- .NET 9.0
-- Grpc.AspNetCore 2.60.0
-- Grpc.AspNetCore.Web 2.60.0
-- Microsoft.CodeAnalysis.CSharp 4.12.0 (KEEP)
-- Google.Protobuf 3.25.0
+---
 
-**Frontend:**
-- React 18.2.0
-- TypeScript 5.3.0
-- Vite 5.0.0
-- grpc-web 1.5.0
-- reactflow 11.10.0
-- @tanstack/react-table 8.11.0
-- zustand 4.4.0
-- react-router-dom 6.21.0
-- react-hook-form 7.49.0
-- tailwindcss 3.4.0
+## Performance Targets
+
+| Operation | Current | Target (v2.0) |
+|-----------|---------|---------------|
+| Graph Build (50 projects) | ~2s | ~1s |
+| Impact Analysis | ~500ms | ~200ms |
+| File Move | ~100ms | ~100ms |
+| UI Response | N/A (CLI) | <100ms |
 
 ---
 
 ## Quality Goals
 
-| Metric | v1.0.0 (Blazor) | v2.0.0 (React) | Target |
-|--------|-----------------|----------------|---------|
-| Test Coverage | ~70% | 80% | 90% |
-| Unit Tests | 160+ | 200+ | 300+ |
-| E2E Tests | 0 | 10+ | 50+ |
-| Accessibility | Partial | WCAG AA | WCAG AAA |
-| Performance | Good | Excellent | Excellent |
-| UI Responsiveness | 2-5s | 50ms | <100ms |
+| Metric | Current | Target |
+|--------|---------|--------|
+| Test Coverage | ~70% | 85% |
+| Unit Tests | 85+ | 150+ |
+| Integration Tests | 10+ | 30+ |
+| E2E Tests | 0 | 20+ |
 
 ---
 
 ## Breaking Changes
 
-### Version 2.0.0 (React + gRPC Migration)
+### v2.0.0
+- CLI remains compatible
+- New REST API (addition, not breaking)
+- Core library API unchanged
 
-**API Changes:**
-- REST/SignalR → gRPC (complete rewrite)
-- JSON → Protocol Buffers
-- Razor components → React components
-
-**Backwards Compatibility:**
-- ✅ Migration plan JSON format (UNCHANGED)
-- ✅ Core analyzers API (UNCHANGED)
-- ✅ File operations (UNCHANGED)
-- ❌ Blazor UI components (deprecated)
-- ❌ SignalR endpoints (removed)
-
-**Migration Path:**
-- Blazor prototype archived in `tools/src/MigrationTool/MigrationTool.Blazor.Server/` (reference only)
-- Users upgrade to React version (single .exe)
-- No data migration needed (stateless tool)
+### v3.0.0
+- May introduce new graph model
+- Will maintain CLI compatibility
 
 ---
 
-## Success Criteria
+## Contributing
 
-### Version 2.0.0 MVP Must-Haves:
-- [ ] Load Framework.sln (46 projects) in <1 second
-- [ ] Dashboard renders all stats correctly
-- [ ] Dependency Graph with React Flow (drag, zoom, auto-layout)
-- [ ] Explorer browses files with TreeView
-- [ ] Create migration plan with 8 Quick Actions
-- [ ] Execute plan with real-time gRPC streaming
-- [ ] All Blazor features ported to React
-- [ ] Performance 3x better than Blazor
-- [ ] UI development 3x faster with hot reload
+We welcome contributions! Priority areas:
 
-### Nice to Have:
-- [ ] Dark mode toggle
-- [ ] Keyboard shortcuts (Cmd/Ctrl+K command palette)
-- [ ] Export dependency graph as PNG/SVG
-- [ ] Offline-capable PWA
-- [ ] Mobile-responsive design
+1. **Reference Updates** - Most impactful feature
+2. **React Frontend** - Better UX
+3. **Additional Tests** - More coverage
+4. **Documentation** - Examples and guides
+
+See [README.md](README.md) for contribution guidelines.
 
 ---
 
-## Deprecation Notice
-
-### Blazor Server (v1.0.0)
-- **Status:** Prototype - functional but not production-ready
-- **Deprecated:** January 2026
-- **Archived:** Code kept in `tools/src/MigrationTool/MigrationTool.Blazor.Server/` for reference
-- **Reason:** Limited UI ecosystem, slower development, manual graph implementation
-- **Replacement:** React + gRPC (v2.0.0+)
-
-### MAUI Desktop
-- **Status:** Experimental
-- **Future:** May be replaced by Tauri wrapper (Rust + React)
-- **Reason:** Tauri is lighter, cross-platform, uses same React UI
-
-### WPF Desktop
-- **Status:** Functional
-- **Future:** Maintained for Windows-only scenarios
-- **Use Case:** Enterprise environments without web browser access
-
----
-
-## Migration Timeline
+## Timeline
 
 ### January 2026 (Current)
-- ✅ Blazor prototype completed
-- ✅ Architecture decision made (React + gRPC)
-- ✅ Documentation created (ARCHITECTURE_DECISION.md, NEXT_STEPS.md)
+- ✅ Core library completed
+- ✅ CLI tool completed
+- ✅ Humanizer test fixtures
+- ✅ Graph and impact analysis
 
-### February 2026
-- Week 1: gRPC Server setup, proto definitions
-- Week 2: React frontend setup, Dashboard page
-- Week 3: Explorer + Analysis pages
-- Week 4: Migration Planner page
+### February-March 2026
+- [ ] REST API
+- [ ] React frontend MVP
+- [ ] Graph visualization
 
-### March 2026
-- Week 1: Polish, testing, bug fixes
-- Week 2: Documentation, deployment
-- Week 3: User testing, feedback
-- Week 4: Release v2.0.0
-
-**Estimated Total Time:** 20-29 hours of focused development
+### Q2 2026
+- [ ] Reference updates
+- [ ] Execution plan
+- [ ] Polish and testing
 
 ---
 
-## Community Requests
-
-### High Priority
-- [x] ~~Blazor UI~~ → React UI (better ecosystem)
-- [x] ~~Dependency graph~~ → React Flow implementation
-- [ ] NuGet package extraction
-- [ ] Bulk file operations
-- [ ] Git integration
-
-### Medium Priority
-- [ ] Solution merger
-- [ ] Project splitter
-- [ ] Configuration transformer
-- [ ] VS Code extension (consuming gRPC API)
-- [ ] CLI tool (consuming gRPC API)
-
-### Low Priority
-- [x] ~~Dark theme~~ → Will be in React version
-- [x] ~~Keyboard shortcuts~~ → Planned for React (Cmd+K)
-- [ ] Custom color schemes
-- [ ] Plugin system
-
----
-
-## Performance Benchmarks
-
-**Test Solution:** Framework.sln (46 projects)
-
-| Operation | Blazor v1.0.0 | React+gRPC v2.0.0 (target) | Improvement |
-|-----------|---------------|----------------------------|-------------|
-| Solution Analysis | ~2s | ~0.5s | **4x faster** |
-| Data Transfer | 500KB (JSON) | 150KB (Protobuf) | **70% smaller** |
-| Hot Reload | 2-5s | 50ms | **40-100x faster** |
-| Dependency Graph Render | ~500ms | ~100ms | **5x faster** |
-| Migration Execution | ~5s | ~2s | **2.5x faster** |
-| First Paint | 1.5s | 0.3s | **5x faster** |
-
----
-
-## What We Learned from Blazor Prototype
-
-### ✅ What Worked:
-- SignalR for real-time updates (but gRPC streaming is better)
-- 3-panel Planner layout (will reuse in React)
-- Quick Actions template concept
-- Hierarchical project grouping
-- Step cards visual design
-- Color scheme (blue-green gradients)
-
-### ❌ What Didn't Scale:
-- Manual SVG graph (340 LOC → React Flow 50 LOC)
-- Limited component libraries
-- Slow hot reload hurts productivity
-- CSS complexity (2894 lines)
-- Blazor-specific state management quirks
-
-### 🎯 Reusable Assets:
-- **Design system:** All colors, layouts, spacing defined
-- **UX flows:** Navigation, interactions validated
-- **Backend:** 100% of Core logic reusable
-- **Knowledge:** Requirements validated, edge cases discovered
-
-**The Blazor code was NOT wasted** - it was essential R&D that informed the production architecture!
-
----
-
-## Technical Architecture
-
-### Current (v1.0.0 - Blazor):
-```
-┌────────────────────────────────────┐
-│   Blazor Server (SignalR)          │
-│   - Razor components               │
-│   - C# code-behind                 │
-└────────────┬───────────────────────┘
-             │ (in-process)
-┌────────────▼───────────────────────┐
-│   MigrationTool.Core               │
-│   - Roslyn analyzers               │
-└────────────────────────────────────┘
-```
-
-### Planned (v2.0.0 - React + gRPC):
-```
-┌────────────────────────────────────┐
-│   React Frontend (TypeScript)      │
-│   - Modern UI components           │
-│   - Fast Vite hot reload           │
-│   - React Flow, TanStack Table     │
-└────────────┬───────────────────────┘
-             │ gRPC-Web (HTTP/2, Protobuf)
-┌────────────▼───────────────────────┐
-│   gRPC Server (.NET 9)             │
-│   - Protocol Buffers               │
-│   - Streaming support              │
-│   - Generated types                │
-└────────────┬───────────────────────┘
-             │ (in-process)
-┌────────────▼───────────────────────┐
-│   MigrationTool.Core               │
-│   - Roslyn analyzers (UNCHANGED)   │
-└────────────────────────────────────┘
-```
-
----
-
-## Long-Term Vision
-
-### Version 3.0.0 and Beyond
-
-**Extensibility:**
-- Plugin system for custom analyzers
-- Extension API for VS Code/Visual Studio
-- CLI tool sharing same gRPC backend
-- Mobile app (React Native) for code review
-
-**Advanced Features:**
-- AI-powered migration suggestions
-- Framework migration wizards (.NET Framework → .NET 9)
-- Dependency injection container migration
-- Multi-repository migrations
-
-**Enterprise:**
-- Team collaboration features
-- Migration plan approvals
-- Compliance and audit logging
-- Integration with Azure DevOps/GitHub Actions
-
----
-
-## Resource Links
-
-### Current Implementation (Blazor)
-- Code: `tools/src/MigrationTool/MigrationTool.Blazor.Server/`
-- Docs: `tools/README.md`
-- Tests: `tools/tests/MigrationTool/`
-
-### Architecture Documentation
-- Decision: `docs/ARCHITECTURE_DECISION.md`
-- Migration Plan: `docs/NEXT_STEPS.md`
-
-### Future Implementation (React + gRPC)
-- To be created in: `tools/src/MigrationTool/MigrationTool.GrpcServer/`
-- Frontend in: `frontend/migration-tool-ui/`
-
----
-
-## Conclusion
-
-**Version 1.0.0 (Blazor)** successfully validated:
-- ✅ Migration workflows
-- ✅ UI/UX requirements  
-- ✅ Core functionality
-- ✅ 46-project scalability
-
-**Version 2.0.0 (React + gRPC)** will deliver:
-- 🚀 3-5x better performance
-- 🎨 Modern UI with best-in-class libraries
-- ⚡ 40-100x faster development cycles
-- 📦 Smaller payloads (70% reduction)
-- 🔄 Real-time streaming natively
-
-**The journey continues!** 🎯
-
----
-
-**Maintained by:** MigrationTool Development Team  
-**Next Review:** After React + gRPC MVP completion
+**Maintained by:** MigrationTool Team  
+**Next Review:** After React MVP

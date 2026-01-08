@@ -1,12 +1,14 @@
 # MigrationTool
 
-**A powerful .NET project migration and refactoring tool with dual UI (Web & Desktop)**
+**A powerful .NET project migration and refactoring tool with CLI, Web, and Desktop interfaces**
 
-MigrationTool helps you analyze, reorganize, and migrate .NET projects with ease. Built with Roslyn for accurate code analysis and available as both a web application (Blazor Server) and desktop application (MAUI).
+MigrationTool helps you analyze, reorganize, and migrate .NET projects with ease. Built with Roslyn for accurate code analysis, MSBuild for project manipulation, and available as CLI, web application (Blazor Server), and desktop application (MAUI/WPF).
 
 ## Features
 
 ### 🔍 Analysis
+- **Solution Graph** - Model entire solution as a dependency graph (projects, files, types, namespaces)
+- **Impact Analysis** - Predict what will be affected by move/rename/delete operations
 - **Solution Parsing** - Parse .sln files and discover all projects
 - **Project Analysis** - Analyze .csproj files, dependencies, and references
 - **Code Analysis** - Use Roslyn to analyze C# source code
@@ -15,13 +17,25 @@ MigrationTool helps you analyze, reorganize, and migrate .NET projects with ease
 ### 📊 Visualization
 - **Dashboard** - Overview of solution statistics
 - **Project Explorer** - Browse projects, files, and code structure
-- **Dependency Graph** - Visualize project dependencies (coming soon)
+- **Dependency Graph** - Visualize project and type dependencies
 
-### 🔄 Migration
-- **Migration Planner** - Plan complex refactoring operations
-- **File Operations** - Move, copy, rename files and folders
-- **Namespace Refactoring** - Automatically update namespaces
-- **Project Creation** - Create new projects from templates
+### 🔄 Migration Operations
+- **File Operations** - Move, copy, rename, delete files with auto-namespace updates
+- **Folder Operations** - Move, copy, delete folders recursively
+- **Namespace Refactoring** - Automatically update namespaces using Roslyn
+- **Class Renaming** - Rename types including constructors
+- **Cross-Solution Migration** - Migrate code between different solutions
+- **Using Management** - Add/remove using directives
+
+### 🛠️ CLI Tool
+- **analyze-solution** - Analyze solution structure
+- **analyze-graph** - Build and display solution dependency graph
+- **analyze-impact** - Predict impact of migration operations
+- **move-file/folder** - Move files/folders with namespace updates
+- **copy-file/folder** - Copy files/folders
+- **rename-file** - Rename files with optional class renaming
+- **update-namespace** - Update namespaces in files
+- **find-usages** - Find where types/symbols are used
 
 ### 🌐 Internationalization
 - **4 Languages** - English, Czech, Polish, Ukrainian
@@ -32,32 +46,58 @@ MigrationTool helps you analyze, reorganize, and migrate .NET projects with ease
 ```
 tools/
 ├── src/MigrationTool/
-│   ├── MigrationTool.Core.Abstractions/   # Interfaces & Models
-│   ├── MigrationTool.Core/                # Business Logic (Roslyn)
+│   ├── MigrationTool.Core.Abstractions/   # Interfaces, Models, Graph types
+│   ├── MigrationTool.Core/                # Business Logic (Roslyn, MSBuild)
+│   │   ├── Graph/                         # SolutionGraph, ImpactAnalyzer
+│   │   ├── Services/                      # File, Migration services
+│   │   └── Rewriters/                     # Roslyn syntax rewriters
+│   ├── MigrationTool.Cli/                 # Command-line interface
 │   ├── MigrationTool.Localization/        # i18n Resources
 │   ├── MigrationTool.Blazor.Server/       # Web UI
-│   └── MigrationTool.Maui/                # Desktop UI
+│   ├── MigrationTool.Maui/                # Desktop UI (MAUI)
+│   └── MigrationTool.Wpf/                 # Desktop UI (WPF)
 │
-└── tests/MigrationTool/
-    ├── MigrationTool.Core.Tests/          # Unit & Integration Tests
-    ├── MigrationTool.Maui.Tests/          # MAUI ViewModel Tests
-    ├── MigrationTool.Blazor.Server.Tests/ # Blazor Component Tests
-    └── MigrationTool.Tests.Infrastructure/ # Test Helpers
+├── tests/MigrationTool/
+│   ├── MigrationTool.Cli.Tests/           # CLI & Graph tests
+│   ├── MigrationTool.Core.Tests/          # Unit & Integration tests
+│   ├── MigrationTool.Tests.Infrastructure/ # Test helpers & fixtures
+│   └── ...
+│
+└── scripts/
+    ├── sync_to_migration_tool_repo.py     # Sync to standalone repo
+    └── create_slim_humanizer_v2.py        # Test fixture generator
 ```
 
-### Shared Core
+### Core Components
 
-Both UIs share the same **Core** library:
-- **Analyzers**: `SolutionAnalyzer`, `ProjectAnalyzer`, `CodeAnalyzer`
-- **Services**: `IFileSystemService`, `IMigrationPlanner`, `IMigrationExecutor`
-- **Models**: `SolutionInfo`, `ProjectInfo`, `SourceFileInfo`, `MigrationPlan`
+| Component | Description |
+|-----------|-------------|
+| **SolutionGraph** | In-memory graph of solution dependencies |
+| **SolutionGraphBuilder** | Builds graph using MSBuildWorkspace + Roslyn |
+| **ImpactAnalyzer** | Analyzes impact of move/rename/delete operations |
+| **FileOperationService** | File move/copy/delete with namespace updates |
+| **CrossSolutionMigrationService** | Migrate between different solutions |
+| **NamespaceRewriter** | Roslyn rewriter for namespace changes |
+| **ClassRenamer** | Roslyn rewriter for type renaming |
 
-### Dual UI
+### Graph Model
 
-| UI | Technology | Use Case |
-|----|-----------|----------|
-| **Blazor Server** | ASP.NET Core | Web-based, accessible from any browser, can be hosted on server |
-| **MAUI** | .NET MAUI (XAML) | Native desktop app for Windows (macOS support planned) |
+```
+SolutionGraph
+├── Solutions (SolutionNode)
+├── Projects (ProjectNode)
+├── Files (FileNode)
+├── Types (TypeNode) - classes, interfaces, records, enums
+├── Namespaces (NamespaceNode)
+├── Packages (PackageNode)
+└── Edges
+    ├── ProjectReferenceEdge
+    ├── PackageReferenceEdge
+    ├── TypeInheritsEdge
+    ├── TypeImplementsEdge
+    ├── FileContainsTypeEdge
+    └── ...
+```
 
 ## Getting Started
 
@@ -65,7 +105,7 @@ Both UIs share the same **Core** library:
 
 - .NET 9.0 SDK or later
 - Visual Studio 2022 or Rider (optional, for development)
-- Windows 10/11 (for MAUI desktop app)
+- Windows 10/11 (for MAUI/WPF desktop apps)
 
 ### Building from Source
 
@@ -74,16 +114,30 @@ cd tools
 dotnet build MigrationTool.sln
 ```
 
+### Running CLI
+
+```bash
+cd tools/src/MigrationTool/MigrationTool.Cli
+dotnet run -- --help
+
+# Examples:
+dotnet run -- analyze-solution "C:\path\to\solution.sln"
+dotnet run -- analyze-graph "C:\path\to\solution.sln" --output graph.json
+dotnet run -- analyze-impact "C:\path\to\solution.sln" --type "MyNamespace.MyClass" --operation move --target "NewNamespace"
+dotnet run -- move-file "source.cs" "target.cs" --update-namespace
+```
+
 ### Running Tests
 
 ```bash
+cd tools
 dotnet test MigrationTool.sln
 ```
 
 **Test Results:**
-- 160+ unit and integration tests
-- Core, ViewModels, Components, Services coverage
-- Uses real file system for integration tests
+- 85+ tests in CLI.Tests (including Humanizer integration tests)
+- Uses real Humanizer project from ZIP for realistic testing
+- Graph analysis tested on 271 types, 236 files, 26 namespaces
 
 ### Running Blazor Server
 
@@ -101,82 +155,102 @@ cd tools/src/MigrationTool/MigrationTool.Maui
 dotnet run
 ```
 
-Or use Visual Studio's built-in run button.
+## CLI Commands
 
-## Deployment
-
-Use the Python deployment script to create release builds:
+### Analysis Commands
 
 ```bash
-cd tools/Deploy
+# Analyze solution structure
+migration-tool analyze-solution <solution-path>
 
-# Deploy Blazor Server
-python deploy.py --platform blazor --version 1.0.0
+# Build dependency graph
+migration-tool analyze-graph <solution-path> [--output graph.json]
 
-# Deploy MAUI Desktop
-python deploy.py --platform maui --version 1.0.0
-
-# Deploy both
-python deploy.py --platform all --version 1.0.0
+# Analyze impact of operations
+migration-tool analyze-impact <solution-path> --type <type-name> --operation <move|rename|delete>
 ```
 
-Output will be in `tools/Deploy/Blazor/v{version}/` and `tools/Deploy/Maui/v{version}/`.
+### File Operations
 
-See [Deploy/README.md](Deploy/README.md) for detailed deployment instructions.
+```bash
+# Move file with namespace update
+migration-tool move-file <source> <target> [--update-namespace] [--dry-run]
 
-## Usage
+# Copy file
+migration-tool copy-file <source> <target> [--update-namespace]
 
-### 1. Load a Solution
+# Rename file (optionally rename class too)
+migration-tool rename-file <path> <new-name> [--rename-class]
 
-**Blazor**: Navigate to Settings, enter workspace path, select solution  
-**MAUI**: Click "Open Solution" button, browse to .sln file
+# Delete file (with reference check)
+migration-tool delete-file <path> [--check-references]
+```
 
-### 2. Explore Projects
+### Folder Operations
 
-Navigate to **Project Explorer** to:
-- View all projects in the solution
-- Browse source files
-- Inspect classes and tests
-- Analyze project structure
+```bash
+# Move folder recursively
+migration-tool move-folder <source> <target> [--update-namespace <old> <new>]
 
-### 3. Plan Migration
+# Copy folder
+migration-tool copy-folder <source> <target>
+```
 
-Navigate to **Migration Planner** to:
-- Create a new migration plan
-- Add migration steps (move file, create project, rename namespace, etc.)
-- Validate the plan
-- Execute the migration
+### Namespace Operations
+
+```bash
+# Update namespace in files
+migration-tool update-namespace <path> --old <old-ns> --new <new-ns>
+
+# Find usages of a type
+migration-tool find-usages <solution-path> --type <type-name>
+```
+
+## Test Fixtures
+
+Tests use real open-source projects for realistic validation:
+
+### Humanizer Project
+- **Source:** [Humanizer GitHub](https://github.com/Humanizr/Humanizer)
+- **Location:** `datasets/test-fixtures/Humanizer-slim.zip`
+- **Size:** 271 types, 236 files, 26 namespaces
+- **Usage:** Graph building, impact analysis testing
+
+```csharp
+// In tests
+using var fixture = TestProjectFixture.Humanizer();
+var graph = await builder.BuildGraphAsync(fixture.EntryPoint);
+// Graph contains real Humanizer project structure
+```
 
 ## Technology Stack
 
 - **.NET 9.0** - Latest .NET framework
-- **Roslyn** - Microsoft.CodeAnalysis for C# parsing
+- **Roslyn** - Microsoft.CodeAnalysis for C# parsing and rewriting
+- **MSBuild** - Microsoft.Build for project file manipulation
+- **System.CommandLine** - CLI framework
 - **Blazor Server** - Web UI with SignalR
 - **.NET MAUI** - Cross-platform desktop UI
-- **CommunityToolkit.Mvvm** - MVVM helpers for MAUI
 - **xUnit** - Testing framework
-- **bUnit** - Blazor component testing
 - **FluentAssertions** - Test assertions
 
-## Project Structure
+## Project Status
 
-### Core Projects
+### ✅ Completed
+- Core analyzers (Solution, Project, Code)
+- Solution Graph model and builder
+- Impact Analyzer
+- File/Folder operations with namespace updates
+- Cross-solution migration
+- CLI interface
+- Humanizer test fixtures
+- 85+ tests
 
-- **Core.Abstractions** - Interfaces and contracts
-- **Core** - Business logic, analyzers, services
-- **Localization** - i18n resources (EN, CS, PL, UK)
-
-### UI Projects
-
-- **Blazor.Server** - Web-based UI (ASP.NET Core)
-- **Maui** - Desktop UI (XAML)
-
-### Test Projects
-
-- **Core.Tests** - 60+ unit tests for analyzers and services
-- **Maui.Tests** - 60+ tests for ViewModels
-- **Blazor.Server.Tests** - 28+ tests for components
-- **Tests.Infrastructure** - Shared test utilities
+### 🔜 Planned
+- React frontend (see ROADMAP.md)
+- Reference updates after type moves
+- Execution plan with rollback
+- Full semantic analysis
 
 ## Contributing
 
@@ -196,10 +270,6 @@ This project is part of the Autofac sandbox repository.
 
 See [ROADMAP.md](ROADMAP.md) for planned features and improvements.
 
-## Support
-
-For issues, questions, or feature requests, please open an issue on GitHub.
-
 ---
 
-**Built with ❤️ using .NET 9.0 and Roslyn**
+**Built with ❤️ using .NET 9.0, Roslyn, and MSBuild**

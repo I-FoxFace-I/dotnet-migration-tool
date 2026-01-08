@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\src\MigrationTool\MigrationTool.Core.Abstractions\MigrationTool.Core.Abstractions.csproj" />
   </ItemGroup>
 

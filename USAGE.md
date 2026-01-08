@@ -2,169 +2,361 @@
 
 Step-by-step guide to using MigrationTool for .NET project migration and refactoring.
 
-## Getting Started
+## Quick Start
 
-### First Launch
+### CLI (Recommended)
 
-1. **Launch the application**
-   - **Blazor**: Navigate to `http://localhost:5000`
-   - **MAUI**: Double-click `MigrationTool.Maui.exe`
+```bash
+cd tools/src/MigrationTool/MigrationTool.Cli
 
-2. **Select language** (optional)
-   - Click language selector in sidebar
-   - Choose: English, Čeština, Polski, or Українська
+# Analyze a solution
+dotnet run -- analyze-solution "C:\path\to\solution.sln"
 
-3. **Configure workspace**
-   - Navigate to Settings
-   - Enter workspace path (e.g., `C:\Projects\MyApp`)
-   - Click "Apply"
+# Build dependency graph
+dotnet run -- analyze-graph "C:\path\to\solution.sln"
 
-4. **Load a solution**
-   - Select solution from dropdown
-   - Click "Load Solution" or navigate to Dashboard
+# Check impact before moving a type
+dotnet run -- analyze-impact "C:\path\to\solution.sln" --type "MyApp.Services.UserService" --operation move
+```
 
-## Main Features
+### Web UI (Blazor)
 
-### 📊 Dashboard
+```bash
+cd tools/src/MigrationTool/MigrationTool.Blazor.Server
+dotnet run
+# Open http://localhost:5000
+```
 
-**Purpose:** Overview of your solution
+### Desktop (MAUI/WPF)
 
-**What you'll see:**
-- Total projects count
-- Test vs. source projects breakdown
-- Files, classes, and tests count
-- Solution path and name
+```bash
+cd tools/src/MigrationTool/MigrationTool.Maui
+dotnet run
+```
 
-**Actions:**
-- Click on metrics to see details
-- Navigate to Explorer for deep dive
+---
 
-### 📁 Project Explorer
+## CLI Commands Reference
 
-**Purpose:** Browse and analyze project structure
+### Analysis Commands
 
-**Features:**
-- **Project List** (left panel)
-  - Filter by test/source projects
-  - Click project to see details
+#### `analyze-solution`
+Analyze solution structure and display statistics.
 
-- **Project Details** (right panel)
-  - File count, class count, test count
-  - Project references and packages
-  - Browse source files
-  - Inspect classes and methods
+```bash
+migration-tool analyze-solution <solution-path> [options]
 
-**Tips:**
-- Use the filter to focus on specific project types
-- Click on files to see their classes
-- Test projects are marked with 🧪 badge
+Options:
+  --json          Output as JSON
+  --verbose       Show detailed information
 
-### 📋 Migration Planner
+Examples:
+  migration-tool analyze-solution "C:\Projects\MyApp.sln"
+  migration-tool analyze-solution "C:\Projects\MyApp.sln" --json
+```
 
-**Purpose:** Plan and execute migrations
+#### `analyze-graph`
+Build a dependency graph of the solution.
 
-**Workflow:**
+```bash
+migration-tool analyze-graph <solution-path> [options]
 
-1. **Create a Plan**
-   - Click "Create Plan"
-   - Give your plan a name
+Options:
+  --output <file>   Save graph to JSON file
+  --fast            Skip type usage analysis (faster)
+  --verbose         Show detailed progress
 
-2. **Add Migration Steps**
-   - Click "+ Add"
-   - Select action type:
-     - Move File
-     - Move Folder
-     - Copy File/Folder
-     - Create Project
-     - Rename Namespace
-   - Specify source and target
+Examples:
+  migration-tool analyze-graph "C:\Projects\MyApp.sln"
+  migration-tool analyze-graph "C:\Projects\MyApp.sln" --output graph.json
+```
 
-3. **Review Plan**
-   - Check each step
-   - Remove unwanted steps
-   - Reorder if needed
+**Output includes:**
+- Projects and their references
+- Files and their types
+- Namespaces
+- Inheritance relationships
+- Interface implementations
 
-4. **Validate** (coming in v1.1)
-   - Click "Validate"
-   - Review warnings and errors
-   - Fix issues
+#### `analyze-impact`
+Predict what will be affected by a migration operation.
 
-5. **Execute** (coming in v1.1)
-   - Click "Execute Plan"
-   - Monitor progress
-   - Review results
+```bash
+migration-tool analyze-impact <solution-path> [options]
 
-6. **Save/Load Plans**
-   - Export plan as JSON
-   - Share with team
-   - Reuse for similar migrations
+Options:
+  --type <name>       Type to analyze (fully qualified)
+  --file <path>       File to analyze
+  --namespace <name>  Namespace to analyze
+  --operation <op>    Operation: move, rename, delete
+  --target <name>     Target location/name (for move/rename)
+
+Examples:
+  # What happens if I move UserService?
+  migration-tool analyze-impact "MyApp.sln" --type "MyApp.Services.UserService" --operation move --target "MyApp.Core.Services"
+  
+  # What happens if I rename a namespace?
+  migration-tool analyze-impact "MyApp.sln" --namespace "MyApp.Old" --operation rename --target "MyApp.New"
+  
+  # What happens if I delete this file?
+  migration-tool analyze-impact "MyApp.sln" --file "Services/LegacyService.cs" --operation delete
+```
+
+**Output includes:**
+- Affected files count
+- Affected types
+- Required namespace updates
+- Breaking changes warnings
+
+---
+
+### File Operations
+
+#### `move-file`
+Move a file with optional namespace update.
+
+```bash
+migration-tool move-file <source> <target> [options]
+
+Options:
+  --update-namespace    Update namespace to match new location
+  --dry-run            Show what would happen without making changes
+
+Examples:
+  migration-tool move-file "Services/UserService.cs" "Core/Services/UserService.cs" --update-namespace
+  migration-tool move-file "Old/Helper.cs" "New/Helper.cs" --dry-run
+```
+
+#### `copy-file`
+Copy a file with optional namespace update.
+
+```bash
+migration-tool copy-file <source> <target> [options]
+
+Options:
+  --update-namespace    Update namespace in the copy
+  --dry-run            Show what would happen
+
+Examples:
+  migration-tool copy-file "Template.cs" "NewFeature/Template.cs" --update-namespace
+```
+
+#### `rename-file`
+Rename a file and optionally the class inside.
+
+```bash
+migration-tool rename-file <path> <new-name> [options]
+
+Options:
+  --rename-class    Also rename the primary class to match filename
+  --dry-run        Show what would happen
+
+Examples:
+  migration-tool rename-file "UserService.cs" "UserManager.cs" --rename-class
+```
+
+#### `delete-file`
+Delete a file with optional reference checking.
+
+```bash
+migration-tool delete-file <path> [options]
+
+Options:
+  --check-references    Warn if file is referenced elsewhere
+  --force              Delete even if referenced
+  --dry-run            Show what would happen
+
+Examples:
+  migration-tool delete-file "Legacy/OldService.cs" --check-references
+```
+
+---
+
+### Folder Operations
+
+#### `move-folder`
+Move a folder recursively with namespace updates.
+
+```bash
+migration-tool move-folder <source> <target> [options]
+
+Options:
+  --old-namespace <ns>    Old namespace prefix
+  --new-namespace <ns>    New namespace prefix
+  --dry-run              Show what would happen
+
+Examples:
+  migration-tool move-folder "Services/Users" "Core/Users" --old-namespace "MyApp.Services.Users" --new-namespace "MyApp.Core.Users"
+```
+
+#### `copy-folder`
+Copy a folder recursively.
+
+```bash
+migration-tool copy-folder <source> <target> [options]
+
+Options:
+  --old-namespace <ns>    Old namespace prefix (for updates)
+  --new-namespace <ns>    New namespace prefix
+  --dry-run              Show what would happen
+
+Examples:
+  migration-tool copy-folder "Templates" "NewProject/Templates"
+```
+
+---
+
+### Namespace Operations
+
+#### `update-namespace`
+Update namespace declarations in files.
+
+```bash
+migration-tool update-namespace <path> [options]
+
+Options:
+  --old <namespace>    Old namespace to replace
+  --new <namespace>    New namespace
+  --recursive         Process subdirectories
+  --dry-run          Show what would happen
+
+Examples:
+  migration-tool update-namespace "Services/" --old "MyApp.Services" --new "MyApp.Core.Services" --recursive
+```
+
+#### `find-usages`
+Find where a type or symbol is used.
+
+```bash
+migration-tool find-usages <solution-path> [options]
+
+Options:
+  --type <name>       Type to find (fully qualified)
+  --symbol <name>     Symbol to find
+  --json             Output as JSON
+
+Examples:
+  migration-tool find-usages "MyApp.sln" --type "MyApp.Services.IUserService"
+```
+
+---
 
 ## Common Workflows
 
-### Workflow 1: Reorganize Test Projects
+### Workflow 1: Reorganize Project Structure
 
-**Goal:** Split a monolithic test project into Unit/Integration/E2E projects
+**Goal:** Move services from `MyApp.Web/Services` to `MyApp.Core/Services`
 
-**Steps:**
+```bash
+# 1. Analyze impact first
+migration-tool analyze-impact "MyApp.sln" --namespace "MyApp.Web.Services" --operation move --target "MyApp.Core.Services"
 
-1. **Analyze current structure**
-   - Load solution in Project Explorer
-   - Select your test project
-   - Browse test files
+# 2. If impact is acceptable, do dry-run
+migration-tool move-folder "MyApp.Web/Services" "MyApp.Core/Services" \
+  --old-namespace "MyApp.Web.Services" \
+  --new-namespace "MyApp.Core.Services" \
+  --dry-run
 
-2. **Create migration plan**
-   - Create New Plan: "Split Test Projects"
-   - Add step: Create Project "MyApp.Unit.Tests"
-   - Add step: Create Project "MyApp.Integration.Tests"
-   - Add step: Move Folder "Unit/*" → "MyApp.Unit.Tests/"
-   - Add step: Move Folder "Integration/*" → "MyApp.Integration.Tests/"
-   - Add step: Rename Namespace "MyApp.Tests.Unit" → "MyApp.Unit.Tests"
+# 3. Execute the move
+migration-tool move-folder "MyApp.Web/Services" "MyApp.Core/Services" \
+  --old-namespace "MyApp.Web.Services" \
+  --new-namespace "MyApp.Core.Services"
 
-3. **Execute**
-   - Validate plan
-   - Review changes
-   - Execute
-   - Verify build
+# 4. Build to verify
+dotnet build MyApp.sln
+```
 
-### Workflow 2: Extract Shared Library
+### Workflow 2: Extract Shared Code
 
-**Goal:** Extract common code into a shared library
+**Goal:** Copy utility classes to a shared library
 
-**Steps:**
+```bash
+# 1. Build graph to understand dependencies
+migration-tool analyze-graph "MyApp.sln" --output graph.json
 
-1. **Identify shared code**
-   - Use Project Explorer
-   - Find classes used by multiple projects
+# 2. Copy utilities to shared project
+migration-tool copy-folder "MyApp.Web/Utilities" "MyApp.Shared/Utilities" \
+  --old-namespace "MyApp.Web.Utilities" \
+  --new-namespace "MyApp.Shared.Utilities"
 
-2. **Create migration plan**
-   - Create New Plan: "Extract Core Library"
-   - Add step: Create Project "MyApp.Core"
-   - Add steps: Move files to new project
-   - Add steps: Update namespaces
-   - Add steps: Add project references
+# 3. Update project references manually in .csproj
+# 4. Build and test
+```
 
-3. **Execute**
-   - Validate dependencies
-   - Execute plan
-   - Update consuming projects
+### Workflow 3: Rename a Service
 
-### Workflow 3: Migrate to New Namespace Structure
+**Goal:** Rename `UserService` to `UserManager`
 
-**Goal:** Reorganize namespaces to follow naming conventions
+```bash
+# 1. Check impact
+migration-tool analyze-impact "MyApp.sln" --type "MyApp.Services.UserService" --operation rename --target "UserManager"
 
-**Steps:**
+# 2. Rename file and class
+migration-tool rename-file "Services/UserService.cs" "UserManager.cs" --rename-class
 
-1. **Analyze current namespaces**
-   - Project Explorer shows all namespaces
-   - Identify inconsistencies
+# 3. Build to find remaining references
+dotnet build MyApp.sln
+# Fix any remaining references manually
+```
 
-2. **Create migration plan**
-   - Add steps: Rename Namespace (for each namespace)
-   - Example: "Company.OldStructure.Services" → "Company.NewStructure.Application.Services"
+### Workflow 4: Cross-Solution Migration
 
-3. **Execute**
-   - Roslyn handles all references automatically
-   - Build and verify
+**Goal:** Copy a feature from one solution to another
+
+```bash
+# Use the CLI cross-solution-migrate command
+migration-tool cross-solution-migrate \
+  --source-solution "C:\OldProject\Old.sln" \
+  --target-solution "C:\NewProject\New.sln" \
+  --source-path "Features/Authentication" \
+  --target-path "Shared/Authentication" \
+  --old-namespace "OldProject.Features.Authentication" \
+  --new-namespace "NewProject.Shared.Authentication"
+```
+
+---
+
+## Understanding the Graph
+
+When you run `analyze-graph`, you get a complete model of your solution:
+
+```
+Graph Statistics:
+  Solutions: 1
+  Projects: 15
+  Files: 234
+  Types: 312
+  Namespaces: 28
+  Edges: 1,456
+    - Project References: 45
+    - Package References: 120
+    - Type Usages: 890
+    - Inheritance: 156
+```
+
+### Node Types
+
+| Node | Description |
+|------|-------------|
+| `SolutionNode` | The .sln file |
+| `ProjectNode` | A .csproj project |
+| `FileNode` | A .cs source file |
+| `TypeNode` | A class, interface, record, struct, or enum |
+| `NamespaceNode` | A namespace |
+| `PackageNode` | A NuGet package |
+
+### Edge Types
+
+| Edge | Description |
+|------|-------------|
+| `ProjectReferenceEdge` | Project A references Project B |
+| `PackageReferenceEdge` | Project references a NuGet package |
+| `TypeInheritsEdge` | Class A inherits from Class B |
+| `TypeImplementsEdge` | Class implements Interface |
+| `FileContainsTypeEdge` | File contains Type |
+| `TypeUsageEdge` | Type A uses Type B |
+
+---
 
 ## Tips & Best Practices
 
@@ -172,15 +364,15 @@ Step-by-step guide to using MigrationTool for .NET project migration and refacto
 
 - ✅ **Commit to Git** - Always have a clean working directory
 - ✅ **Create a branch** - Don't migrate on main branch
-- ✅ **Backup** - Keep a copy of your solution
 - ✅ **Run tests** - Ensure all tests pass before migration
+- ✅ **Use `--dry-run`** - Preview changes before executing
 
 ### During Migration
 
-- ✅ **Small steps** - Break large migrations into smaller plans
-- ✅ **Test frequently** - Validate after each major step
+- ✅ **Small steps** - Break large migrations into smaller operations
+- ✅ **Check impact first** - Use `analyze-impact` before each operation
+- ✅ **Build frequently** - Verify compilation after each step
 - ✅ **Review changes** - Check git diff before committing
-- ✅ **Document** - Add comments to your migration plan
 
 ### After Migration
 
@@ -189,64 +381,76 @@ Step-by-step guide to using MigrationTool for .NET project migration and refacto
 - ✅ **Code review** - Have someone review the changes
 - ✅ **Commit** - Commit with descriptive message
 
-## Keyboard Shortcuts (MAUI only)
+---
 
-| Shortcut | Action |
-|----------|--------|
-| Ctrl+O | Open Solution |
-| Ctrl+R | Refresh |
-| Ctrl+S | Save Plan |
-| F5 | Execute Plan |
-| Escape | Cancel |
+## Troubleshooting
 
-## Language-Specific Features
+### "Type not found in graph"
+- Ensure you're using the fully qualified type name
+- Run `analyze-graph` first to see available types
 
-### Czech (Čeština)
-- Full UI translation
-- Czech naming conventions support
+### "Namespace update didn't work"
+- Check that the old namespace exactly matches
+- Namespace rewriter only updates exact matches, not sub-namespaces
 
-### Polish (Polski)
-- Full UI translation
-- Polish diacritics support
+### "Build fails after move"
+- Some references may need manual updates
+- Check for hardcoded paths in .csproj files
+- Update project references if needed
 
-### Ukrainian (Українська)
-- Full UI translation
-- Cyrillic alphabet support
+### "Graph building is slow"
+- Use `--fast` option to skip type usage analysis
+- Large solutions (100+ projects) take longer
 
-## Known Limitations (v1.0.0)
+---
 
-- Migration execution not yet implemented (coming in v1.1)
-- No undo/rollback (use Git)
-- Windows only for MAUI
-- No batch operations
-- No AI suggestions
+## Programmatic Usage
+
+You can also use MigrationTool.Core in your own code:
+
+```csharp
+using MigrationTool.Core.Graph;
+using MigrationTool.Core.Services;
+using Microsoft.Extensions.Logging;
+
+// Build a solution graph
+var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<SolutionGraphBuilder>();
+await using var builder = new SolutionGraphBuilder(logger);
+var graph = await builder.BuildGraphAsync("path/to/solution.sln");
+
+// Analyze impact
+var analyzer = new ImpactAnalyzer(analyzerLogger);
+var report = await analyzer.AnalyzeMoveTypeAsync(graph, 
+    new MoveTypeOperation("MyApp.OldService", "MyApp.NewNamespace"));
+
+Console.WriteLine(report.ToMarkdown());
+
+// Perform file operations
+var fileService = new FileOperationService(fileLogger);
+var result = await fileService.MoveFileAsync(
+    "source.cs", 
+    "target.cs", 
+    updateNamespace: true);
+```
+
+---
 
 ## FAQ
 
-**Q: Can I migrate from .NET Framework to .NET Core?**  
-A: Partially. The tool can help reorganize projects, but framework-specific code must be migrated manually.
+**Q: Can I undo a migration?**  
+A: Use Git to revert changes. Always commit before migrating.
 
-**Q: Does it support VB.NET or F#?**  
-A: Not yet. C# only in v1.0. VB.NET and F# support planned for v2.0.
+**Q: Does it update all references automatically?**  
+A: Currently updates namespaces and file locations. Full reference updates (using statements in other files) are planned.
 
 **Q: Can I use this in CI/CD?**  
-A: CLI version planned for v2.0. Currently, it's interactive only.
+A: Yes! The CLI is designed for automation. Use `--json` for machine-readable output.
 
-**Q: Is it safe to use on production code?**  
-A: Always use with version control. The tool is in v1.0 - test thoroughly before production use.
+**Q: How large a solution can it handle?**  
+A: Tested with 271 types, 236 files. Should handle 500+ project solutions.
 
-**Q: Can I extend it with custom analyzers?**  
-A: Not yet. Plugin system planned for v2.0.
-
-## Support
-
-- **Issues:** Open a GitHub issue
-- **Questions:** Check existing issues or create new one
-- **Feature Requests:** See ROADMAP.md and submit suggestions
-
-## Contributing
-
-See main README.md for contribution guidelines.
+**Q: Does it support .NET Framework?**  
+A: Yes, it can analyze .NET Framework projects, but runs on .NET 9.
 
 ---
 
