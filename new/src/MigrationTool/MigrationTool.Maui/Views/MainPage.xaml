@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MigrationTool.Maui.ViewModels"
+             x:Class="MigrationTool.Maui.Views.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*" Padding="20">
+        
+        <!-- Header -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10">
+            <Button Text="Open Solution" 
+                    Command="{Binding LoadSolutionCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"/>
+            <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                              IsVisible="{Binding IsBusy}"
+                              HeightRequest="20" 
+                              WidthRequest="20"/>
+            <Label Text="{Binding CurrentSolution.Name}" 
+                   VerticalOptions="Center"
+                   IsVisible="{Binding HasSolution}"/>
+        </HorizontalStackLayout>
+
+        <!-- Content -->
+        <Frame Grid.Row="1" Margin="0,20,0,0" Padding="20" BackgroundColor="{StaticResource Gray100}">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding HasSolution, Converter={StaticResource InvertedBoolConverter}}">
+                <Label Text="Welcome to Migration Tool" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+                <Label Text="Open a solution to get started" 
+                       FontSize="16" 
+                       TextColor="{StaticResource Gray500}"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0"/>
+            </VerticalStackLayout>
+        </Frame>
+
+    </Grid>
+
+</ContentPage>

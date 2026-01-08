@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MigrationTool.Maui.ViewModels"
+             x:Class="MigrationTool.Maui.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Welcome Section -->
+            <Frame BackgroundColor="{StaticResource Primary}" Padding="30">
+                <VerticalStackLayout>
+                    <Label Text="👋 Welcome to Migration Tool" 
+                           FontSize="26" 
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+                    <Label Text=".NET Project Migration &amp; Refactoring" 
+                           FontSize="16" 
+                           TextColor="White"
+                           Opacity="0.8"
+                           Margin="0,5,0,0"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Loading Indicator -->
+            <Frame IsVisible="{Binding IsLoading}" Padding="40" BackgroundColor="{StaticResource Gray100}">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="15">
+                    <ActivityIndicator IsRunning="True" Color="{StaticResource Primary}" HeightRequest="50" WidthRequest="50"/>
+                    <Label Text="Loading solution..." FontSize="16" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Solution Info -->
+            <Frame IsVisible="{Binding HasSolution}" Padding="20" BorderColor="{StaticResource Primary}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="📂 Current Solution" FontSize="14" TextColor="{StaticResource Gray500}"/>
+                    <Label Text="{Binding Solution.Name}" 
+                           FontSize="22" 
+                           FontAttributes="Bold"/>
+                    <Label Text="{Binding Solution.Path}" 
+                           FontSize="12" 
+                           TextColor="{StaticResource Gray500}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Statistics Grid -->
+            <Grid IsVisible="{Binding HasSolution}" 
+                  ColumnDefinitions="*,*,*" 
+                  RowDefinitions="Auto,Auto" 
+                  ColumnSpacing="15" 
+                  RowSpacing="15">
+                
+                <!-- Projects -->
+                <Frame Grid.Row="0" Grid.Column="0" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding ProjectCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Primary}"/>
+                        <Label Text="📦 Projects" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Test Projects -->
+                <Frame Grid.Row="0" Grid.Column="1" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding TestProjectCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Secondary}"/>
+                        <Label Text="🧪 Test Projects" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Source Projects -->
+                <Frame Grid.Row="0" Grid.Column="2" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding SourceProjectCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Tertiary}"/>
+                        <Label Text="📁 Source Projects" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Files -->
+                <Frame Grid.Row="1" Grid.Column="0" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding FileCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Text="📄 Files" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Classes -->
+                <Frame Grid.Row="1" Grid.Column="1" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding ClassCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Text="🏛️ Classes" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Tests -->
+                <Frame Grid.Row="1" Grid.Column="2" Padding="20" BackgroundColor="{StaticResource Gray100}">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="{Binding TestCount}" 
+                               FontSize="40" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Text="✅ Tests" 
+                               FontSize="14"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+            </Grid>
+
+            <!-- No Solution Message -->
+            <Frame IsVisible="{Binding HasSolution, Converter={StaticResource InvertedBoolConverter}}" 
+                   Padding="50" 
+                   BackgroundColor="{StaticResource Gray100}">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="15">
+                    <Label Text="📁" FontSize="64" HorizontalOptions="Center"/>
+                    <Label Text="No Solution Loaded" 
+                           FontSize="22" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Go to Settings to load a .sln file" 
+                           FontSize="14"
+                           TextColor="{StaticResource Gray500}"
+                           HorizontalOptions="Center"/>
+                    <Button x:Name="OpenSettingsButton"
+                            Text="⚙️ Open Settings" 
+                            Clicked="OnOpenSettingsClicked"
+                            Margin="0,10,0,0"
+                            BackgroundColor="{StaticResource Primary}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

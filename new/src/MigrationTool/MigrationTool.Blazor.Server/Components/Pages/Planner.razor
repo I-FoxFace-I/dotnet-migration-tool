@@ -1,0 +1,911 @@
+@page "/planner"
+@inject AppState AppState
+@inject IMigrationPlanner MigrationPlanner
+@inject IMigrationExecutor MigrationExecutor
+@inject ILocalizationService Localization
+@inject IJSRuntime JS
+@implements IDisposable
+
+<PageTitle>@Localization.Get(Strings.MigrationPlannerTitle)</PageTitle>
+
+<div class="planner-container">
+    <div class="planner-header">
+        <div class="header-content">
+            <h1>📋 @Localization.Get(Strings.MigrationPlannerTitle)</h1>
+            <p class="description">@Localization.Get(Strings.MigrationPlannerDescription)</p>
+        </div>
+        <div class="planner-actions">
+            <button class="btn btn-primary" @onclick="NewPlan">
+                <span class="btn-icon">➕</span> @Localization.Get(Strings.CreatePlan)
+            </button>
+            <button class="btn btn-secondary" @onclick="LoadPlan">
+                <span class="btn-icon">📂</span> @Localization.Get(Strings.LoadPlan)
+            </button>
+            <button class="btn btn-secondary" @onclick="SavePlan" disabled="@(!_hasPlan)">
+                <span class="btn-icon">💾</span> @Localization.Get(Strings.SavePlan)
+            </button>
+            <button class="btn btn-success" @onclick="ExecutePlan" disabled="@(!CanExecute)">
+                <span class="btn-icon">▶️</span> @Localization.Get(Strings.ExecutePlan)
+            </button>
+        </div>
+    </div>
+
+    @if (_hasPlan && _currentPlan != null)
+    {
+        <div class="planner-workspace">
+            <!-- Left Panel: Quick Actions & Templates -->
+            <div class="quick-actions-panel">
+                <div class="panel-section">
+                    <h3>⚡ Quick Actions</h3>
+                    <div class="action-templates">
+                        <button class="template-btn" @onclick='() => AddTemplateStep("MoveProject")' title="Move entire project to new location">
+                            <span class="template-icon">📦</span>
+                            <span class="template-name">Move Project</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("MoveFolder")' title="Move folder with files">
+                            <span class="template-icon">📁</span>
+                            <span class="template-name">Move Folder</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("CopyFile")' title="Copy a single file (keeps original)">
+                            <span class="template-icon">📑</span>
+                            <span class="template-name">Copy File</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("CopyFolder")' title="Copy entire folder (keeps original)">
+                            <span class="template-icon">📂</span>
+                            <span class="template-name">Copy Folder</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("RenameNamespace")' title="Rename namespace across files">
+                            <span class="template-icon">🔤</span>
+                            <span class="template-name">Rename Namespace</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("UpdateReferences")' title="Update project references">
+                            <span class="template-icon">🔗</span>
+                            <span class="template-name">Update References</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("MoveFiles")' title="Move multiple files">
+                            <span class="template-icon">📄</span>
+                            <span class="template-name">Move Files</span>
+                        </button>
+                        <button class="template-btn" @onclick='() => AddTemplateStep("Custom")' title="Add custom step">
+                            <span class="template-icon">⚙️</span>
+                            <span class="template-name">Custom Step</span>
+                        </button>
+                    </div>
+                </div>
+
+                @if (AppState.HasSolution)
+                {
+                    <div class="panel-section">
+                        <h3>📂 Solution Explorer</h3>
+                        <div class="mini-explorer">
+                            <div class="solution-info">
+                                <strong>@AppState.CurrentSolution?.Name</strong>
+                                <span class="text-muted">@AppState.CurrentSolution?.Projects.Count() projects</span>
+                            </div>
+                            <div class="project-quick-list">
+                                @foreach (var project in (AppState.CurrentSolution?.Projects ?? []).Take(10))
+                                {
+                                    <div class="quick-project-item" @onclick="() => SelectProjectForStep(project)">
+                                        <span class="project-icon">@GetProjectTypeIcon(project.ProjectType)</span>
+                                        <span class="project-name">@project.Name</span>
+                                    </div>
+                                }
+                            </div>
+                            <a href="/explorer" class="view-all-link">View all in Explorer →</a>
+                        </div>
+                    </div>
+                }
+
+                <div class="panel-section">
+                    <h3>💡 Tips</h3>
+                    <div class="tips-box">
+                        <p><strong>Tip:</strong> Click on a template to add a pre-configured step to your plan.</p>
+                        <p><strong>Tip:</strong> Reorder steps by clicking the ↑↓ buttons.</p>
+                        <p><strong>Tip:</strong> Always validate your plan before execution!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Migration Plan -->
+            <div class="plan-editor-panel">
+                <div class="plan-header-card">
+                    <div class="plan-title-section">
+                        <input type="text" @bind="_planName" @bind:event="oninput" 
+                               placeholder="Plan Name" class="plan-title-input" />
+                        <textarea @bind="_planDescription" @bind:event="oninput"
+                                  class="plan-description-input" rows="2" 
+                                  placeholder="Add description (optional)..."></textarea>
+                    </div>
+                    <div class="plan-meta-section">
+                        <div class="meta-item">
+                            <span class="meta-label">Status:</span>
+                            <span class="badge @GetStatusBadgeClass()">@_currentPlan.Status</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Steps:</span>
+                            <span class="meta-value">@_currentPlan.Steps.Count</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Created:</span>
+                            <span class="meta-value">@_currentPlan.CreatedAt.ToString("g")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="steps-container">
+                    <div class="steps-header-bar">
+                        <h3>📝 Migration Steps</h3>
+                        <div class="steps-actions">
+                            <button class="btn btn-sm btn-outline-primary" @onclick="ValidatePlanClick">
+                                <span class="btn-icon">✓</span> Validate
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="ClearAllSteps" 
+                                    disabled="@(_currentPlan.Steps.Count == 0)">
+                                <span class="btn-icon">🗑️</span> Clear All
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (_currentPlan.Steps.Any())
+                    {
+                        <div class="steps-list">
+                            @for (int i = 0; i < _currentPlan.Steps.Count; i++)
+                            {
+                                var step = _currentPlan.Steps[i];
+                                var index = i;
+                                var isSelected = step == _selectedStep;
+                                
+                                <div class="step-card @(isSelected ? "selected" : "") @GetStepStatusClass(step)" 
+                                     @onclick="() => SelectStep(step)">
+                                    <div class="step-number">@(index + 1)</div>
+                                    <div class="step-content">
+                                        <div class="step-header">
+                                            <select value="@step.Action" @onchange="(e) => UpdateStepAction(index, e)" 
+                                                    class="step-action-select" @onclick:stopPropagation="true">
+                                                @foreach (var action in Enum.GetValues<MigrationAction>())
+                                                {
+                                                    <option value="@action">@GetActionIcon(action) @action</option>
+                                                }
+                                            </select>
+                                            <span class="badge @GetStepStatusBadge(step)">@step.Status</span>
+                                        </div>
+                                        <div class="step-paths">
+                                            <div class="path-field">
+                                                <label>From:</label>
+                                                <input type="text" value="@step.Source" 
+                                                       @onchange="(e) => UpdateStepSource(index, e)" 
+                                                       class="path-input" 
+                                                       placeholder="Source path..." 
+                                                       @onclick:stopPropagation="true" />
+                                            </div>
+                                            @if (step.Action != MigrationAction.RemoveProjectReference)
+                                            {
+                                                <div class="path-arrow">→</div>
+                                                <div class="path-field">
+                                                    <label>To:</label>
+                                                    <input type="text" value="@step.Target" 
+                                                           @onchange="(e) => UpdateStepTarget(index, e)" 
+                                                           class="path-input" 
+                                                           placeholder="Target path..." 
+                                                           @onclick:stopPropagation="true" />
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="step-actions">
+                                        <button class="icon-btn" @onclick="() => MoveStepUp(index)" 
+                                                @onclick:stopPropagation="true" 
+                                                disabled="@(index == 0)" 
+                                                title="Move up">↑</button>
+                                        <button class="icon-btn" @onclick="() => MoveStepDown(index)" 
+                                                @onclick:stopPropagation="true" 
+                                                disabled="@(index == _currentPlan.Steps.Count - 1)" 
+                                                title="Move down">↓</button>
+                                        <button class="icon-btn icon-btn-danger" @onclick="() => RemoveStep(index)" 
+                                                @onclick:stopPropagation="true" 
+                                                title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-steps-state">
+                            <div class="empty-icon">📋</div>
+                            <h3>No migration steps yet</h3>
+                            <p>Start by clicking a Quick Action template on the left, or add a custom step.</p>
+                        </div>
+                    }
+                </div>
+
+                @if (_validationResult != null && !_validationResult.IsValid)
+                {
+                    <div class="validation-panel error">
+                        <h4>⚠️ Validation Errors</h4>
+                        <ul class="validation-list">
+                            @foreach (var error in _validationResult.Errors)
+                            {
+                                <li>
+                                    @if (error.StepIndex.HasValue)
+                                    {
+                                        <strong>Step @(error.StepIndex.Value + 1):</strong>
+                                    }
+                                    @error.Message
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                else if (_validationResult != null && _validationResult.IsValid)
+                {
+                    <div class="validation-panel success">
+                        <h4>✅ Plan is valid and ready to execute!</h4>
+                    </div>
+                }
+            </div>
+
+            <!-- Right Panel: Step Details & Preview -->
+            <div class="step-details-panel">
+                @if (_selectedStep != null)
+                {
+                    <div class="details-card">
+                        <h3>📄 Step Details</h3>
+                        <div class="detail-section">
+                            <label>Action Type</label>
+                            <div class="detail-value action-type">
+                                <span class="action-icon">@GetActionIcon(_selectedStep.Action)</span>
+                                <span>@_selectedStep.Action</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <label>Source</label>
+                            <div class="detail-value code">@(_selectedStep.Source ?? "Not set")</div>
+                        </div>
+                        @if (_selectedStep.Action != MigrationAction.RemoveProjectReference)
+                        {
+                            <div class="detail-section">
+                                <label>Target</label>
+                                <div class="detail-value code">@(_selectedStep.Target ?? "Not set")</div>
+                            </div>
+                        }
+                        <div class="detail-section">
+                            <label>Status</label>
+                            <div class="detail-value">
+                                <span class="badge @GetStepStatusBadge(_selectedStep)">@_selectedStep.Status</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-description">
+                            <h4>Description</h4>
+                            <p>@GetActionDescription(_selectedStep.Action)</p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_selectedStep.Source))
+                        {
+                            <div class="preview-section">
+                                <h4>Preview</h4>
+                                <div class="preview-box">
+                                    @GetStepPreview(_selectedStep)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="no-selection">
+                        <div class="no-selection-icon">👈</div>
+                        <h3>Select a step</h3>
+                        <p>Click on a step to view its details and preview the changes.</p>
+                    </div>
+                }
+
+                <div class="help-card">
+                    <h4>💡 Quick Help</h4>
+                    <div class="help-items">
+                        <div class="help-item">
+                            <strong>Move File/Folder:</strong> Relocate files or folders (original is removed)
+                        </div>
+                        <div class="help-item">
+                            <strong>Copy File/Folder:</strong> Duplicate files or folders (original kept)
+                        </div>
+                        <div class="help-item">
+                            <strong>Rename Namespace:</strong> Update namespace declarations using Roslyn
+                        </div>
+                        <div class="help-item">
+                            <strong>Add/Remove Ref:</strong> Manage project dependencies in .csproj files
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="welcome-screen">
+            <div class="welcome-icon">🚀</div>
+            <h2>Welcome to Migration Planner</h2>
+            <p>Create a new migration plan or load an existing one to get started.</p>
+            <div class="welcome-actions">
+                <button class="btn btn-primary btn-large" @onclick="NewPlan">
+                    <span class="btn-icon">➕</span> Create New Plan
+                </button>
+                <button class="btn btn-secondary btn-large" @onclick="LoadPlan">
+                    <span class="btn-icon">📂</span> Load Existing Plan
+                </button>
+            </div>
+        </div>
+    }
+
+    @if (_isExecuting)
+    {
+        <div class="execution-overlay">
+            <div class="execution-modal">
+                <h3>🔄 Executing Migration Plan</h3>
+                <div class="progress-container">
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" style="width: @(_progressPercent)%">
+                            <span class="progress-text">@(_progressPercent)%</span>
+                        </div>
+                    </div>
+                    <p class="progress-status">@_progressMessage</p>
+                </div>
+                <div class="execution-steps">
+                    @for (int i = 0; i < _currentPlan!.Steps.Count; i++)
+                    {
+                        var step = _currentPlan.Steps[i];
+                        var stepNum = i + 1;
+                        <div class="execution-step @(i < _currentExecutingStep ? "completed" : i == _currentExecutingStep ? "active" : "pending")">
+                            <span class="step-status-icon">
+                                @if (i < _currentExecutingStep)
+                                {
+                                    <text>✓</text>
+                                }
+                                else if (i == _currentExecutingStep)
+                                {
+                                    <text>⟳</text>
+                                }
+                                else
+                                {
+                                    <text>○</text>
+                                }
+                            </span>
+                            <span>Step @stepNum: @step.Action</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="toast toast-error">
+        <span class="toast-icon">❌</span>
+        <span>@_errorMessage</span>
+        <button class="toast-close" @onclick="ClearError">✕</button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(_successMessage))
+{
+    <div class="toast toast-success">
+        <span class="toast-icon">✅</span>
+        <span>@_successMessage</span>
+        <button class="toast-close" @onclick="ClearSuccess">✕</button>
+    </div>
+}
+
+<!-- Hidden file input for loading plans -->
+<InputFile @ref="_fileInput" OnChange="OnFileSelected" Accept=".json" style="display: none;" />
+
+@code {
+    private MigrationPlan? _currentPlan;
+    private MigrationStep? _selectedStep;
+    private string _planName = "New Migration Plan";
+    private string _planDescription = "";
+    private bool _hasPlan = false;
+    private bool _isExecuting = false;
+    private int _currentExecutingStep = 0;
+    private double _progressPercent = 0;
+    private string _progressMessage = "";
+    private string _errorMessage = "";
+    private string _successMessage = "";
+    private ValidationResult? _validationResult;
+    private InputFile? _fileInput;
+
+    private bool CanExecute => _hasPlan && _currentPlan?.Steps.Count > 0 && !_isExecuting;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private void NewPlan()
+    {
+        _planName = "New Migration Plan";
+        _planDescription = "";
+        _currentPlan = MigrationPlanner.CreatePlan(_planName);
+        _selectedStep = null;
+        _hasPlan = true;
+        _errorMessage = "";
+        _successMessage = "";
+        _validationResult = null;
+    }
+
+    private void AddStep()
+    {
+        if (_currentPlan == null) return;
+
+        var step = new MigrationStep
+        {
+            Index = _currentPlan.Steps.Count + 1,
+            Action = MigrationAction.MoveFile,
+            Source = "",
+            Target = "",
+            Status = StepStatus.Pending
+        };
+
+        _currentPlan = MigrationPlanner.AddStep(_currentPlan, step);
+        _selectedStep = step;
+    }
+
+    private void SelectStep(MigrationStep step)
+    {
+        _selectedStep = step;
+    }
+
+    private void UpdateStepAction(int index, ChangeEventArgs e)
+    {
+        if (_currentPlan == null || !Enum.TryParse<MigrationAction>(e.Value?.ToString(), out var action)) return;
+        
+        var step = _currentPlan.Steps[index];
+        var updatedStep = step with { Action = action };
+        UpdateStep(index, updatedStep);
+    }
+
+    private void UpdateStepSource(int index, ChangeEventArgs e)
+    {
+        if (_currentPlan == null) return;
+        
+        var step = _currentPlan.Steps[index];
+        var updatedStep = step with { Source = e.Value?.ToString() ?? "" };
+        UpdateStep(index, updatedStep);
+    }
+
+    private void UpdateStepTarget(int index, ChangeEventArgs e)
+    {
+        if (_currentPlan == null) return;
+        
+        var step = _currentPlan.Steps[index];
+        var updatedStep = step with { Target = e.Value?.ToString() ?? "" };
+        UpdateStep(index, updatedStep);
+    }
+
+    private void UpdateStep(int index, MigrationStep updatedStep)
+    {
+        if (_currentPlan == null) return;
+
+        var steps = _currentPlan.Steps.ToList();
+        steps[index] = updatedStep;
+        _currentPlan = _currentPlan with { Steps = steps, ModifiedAt = DateTime.UtcNow };
+    }
+
+    private void MoveStepUp(int index)
+    {
+        if (_currentPlan == null || index <= 0) return;
+
+        var steps = _currentPlan.Steps.ToList();
+        (steps[index], steps[index - 1]) = (steps[index - 1], steps[index]);
+        
+        // Update indices
+        for (int i = 0; i < steps.Count; i++)
+        {
+            steps[i] = steps[i] with { Index = i + 1 };
+        }
+        
+        _currentPlan = _currentPlan with { Steps = steps, ModifiedAt = DateTime.UtcNow };
+    }
+
+    private void MoveStepDown(int index)
+    {
+        if (_currentPlan == null || index >= _currentPlan.Steps.Count - 1) return;
+
+        var steps = _currentPlan.Steps.ToList();
+        (steps[index], steps[index + 1]) = (steps[index + 1], steps[index]);
+        
+        // Update indices
+        for (int i = 0; i < steps.Count; i++)
+        {
+            steps[i] = steps[i] with { Index = i + 1 };
+        }
+        
+        _currentPlan = _currentPlan with { Steps = steps, ModifiedAt = DateTime.UtcNow };
+    }
+
+    private void RemoveStep(int index)
+    {
+        if (_currentPlan == null) return;
+
+        _currentPlan = MigrationPlanner.RemoveStep(_currentPlan, index);
+        
+        if (_selectedStep != null && !_currentPlan.Steps.Contains(_selectedStep))
+        {
+            _selectedStep = null;
+        }
+    }
+
+    private async Task LoadPlan()
+    {
+        // Trigger file input click via JS interop
+        await JS.InvokeVoidAsync("eval", "document.querySelector('input[type=file]').click()");
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            _errorMessage = "";
+            var file = e.File;
+            
+            if (file.Size > 1024 * 1024) // 1MB limit
+            {
+                _errorMessage = "File too large. Maximum size is 1MB.";
+                return;
+            }
+
+            using var stream = file.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            var json = await reader.ReadToEndAsync();
+
+            _currentPlan = MigrationPlanner.ImportPlan(json);
+            _planName = _currentPlan.Name;
+            _planDescription = _currentPlan.Description ?? "";
+            _hasPlan = true;
+            _successMessage = $"Plan '{_currentPlan.Name}' loaded successfully with {_currentPlan.Steps.Count} steps.";
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load plan: {ex.Message}";
+        }
+    }
+
+    private async Task SavePlan()
+    {
+        if (_currentPlan == null) return;
+
+        try
+        {
+            _errorMessage = "";
+            
+            // Update plan with current name and description
+            _currentPlan = _currentPlan with 
+            { 
+                Name = _planName, 
+                Description = _planDescription,
+                ModifiedAt = DateTime.UtcNow 
+            };
+
+            var json = MigrationPlanner.ExportPlan(_currentPlan);
+            var fileName = $"{SanitizeFileName(_planName)}.json";
+
+            // Download file via JS interop
+            var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+            await JS.InvokeVoidAsync("downloadFile", fileName, "application/json", Convert.ToBase64String(bytes));
+
+            _successMessage = $"Plan saved as '{fileName}'.";
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to save plan: {ex.Message}";
+        }
+    }
+
+    private async Task ExecutePlan()
+    {
+        if (_currentPlan == null || _currentPlan.Steps.Count == 0) return;
+
+        try
+        {
+            _errorMessage = "";
+            _successMessage = "";
+            _isExecuting = true;
+            _currentExecutingStep = 0;
+            _progressPercent = 0;
+            _progressMessage = "Validating plan...";
+            StateHasChanged();
+
+            // Validate first
+            _validationResult = await MigrationPlanner.ValidatePlanAsync(_currentPlan);
+            if (!_validationResult.IsValid)
+            {
+                _errorMessage = "Plan validation failed. Please fix the issues above.";
+                _isExecuting = false;
+                return;
+            }
+
+            // Execute with progress reporting
+            var progress = new Progress<MigrationProgress>(p =>
+            {
+                _currentExecutingStep = p.CurrentStep;
+                _progressPercent = p.PercentComplete;
+                _progressMessage = $"Step {p.CurrentStep}/{p.TotalSteps}: {p.CurrentAction}";
+                InvokeAsync(StateHasChanged);
+            });
+
+            var result = await MigrationExecutor.ExecuteAsync(_currentPlan, progress);
+
+            if (result.Success)
+            {
+                var completedCount = result.StepResults.Count(s => s.Success);
+                _successMessage = $"✅ Migration completed successfully! {completedCount} steps executed.";
+                
+                // Update step statuses in the plan
+                var steps = _currentPlan.Steps.Select(s => s with { Status = StepStatus.Completed }).ToList();
+                _currentPlan = _currentPlan with { Steps = steps, Status = PlanStatus.Completed };
+            }
+            else
+            {
+                _errorMessage = $"❌ Migration failed: {result.ErrorMessage}";
+                
+                // Mark failed steps
+                var steps = _currentPlan.Steps.ToList();
+                for (int i = 0; i < result.StepResults.Count; i++)
+                {
+                    var stepResult = result.StepResults[i];
+                    steps[i] = steps[i] with { Status = stepResult.Success ? StepStatus.Completed : StepStatus.Failed };
+                }
+                _currentPlan = _currentPlan with { Steps = steps, Status = PlanStatus.Failed };
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Execution error: {ex.Message}";
+        }
+        finally
+        {
+            _isExecuting = false;
+            _currentExecutingStep = 0;
+            StateHasChanged();
+        }
+    }
+
+    private string SanitizeFileName(string name)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        return string.Join("_", name.Split(invalid, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
+    }
+
+    private string GetStatusBadgeClass()
+    {
+        return _currentPlan?.Status switch
+        {
+            PlanStatus.Draft => "bg-secondary",
+            PlanStatus.Ready => "bg-primary",
+            PlanStatus.InProgress => "bg-warning",
+            PlanStatus.Completed => "bg-success",
+            PlanStatus.Failed => "bg-danger",
+            PlanStatus.Cancelled => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetStepStatusClass(MigrationStep step)
+    {
+        return step.Status switch
+        {
+            StepStatus.Completed => "step-completed",
+            StepStatus.Failed => "step-failed",
+            StepStatus.Skipped => "step-skipped",
+            _ => ""
+        };
+    }
+
+    private string GetStepStatusBadge(MigrationStep step)
+    {
+        return step.Status switch
+        {
+            StepStatus.Pending => "bg-secondary",
+            StepStatus.Completed => "bg-success",
+            StepStatus.Failed => "bg-danger",
+            StepStatus.Skipped => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    private void AddTemplateStep(string template)
+    {
+        if (_currentPlan == null) return;
+
+        MigrationStep step = template switch
+        {
+            "MoveProject" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.MoveFolder,
+                Source = "src/OldProject",
+                Target = "src/NewLocation/OldProject",
+                Status = StepStatus.Pending
+            },
+            "MoveFolder" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.MoveFolder,
+                Source = "src/FolderName",
+                Target = "src/NewLocation/FolderName",
+                Status = StepStatus.Pending
+            },
+            "CopyFile" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.CopyFile,
+                Source = "src/File.cs",
+                Target = "src/NewLocation/File.cs",
+                Status = StepStatus.Pending
+            },
+            "CopyFolder" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.CopyFolder,
+                Source = "src/FolderName",
+                Target = "src/NewLocation/FolderName",
+                Status = StepStatus.Pending
+            },
+            "RenameNamespace" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.RenameNamespace,
+                Source = "OldNamespace",
+                Target = "NewNamespace",
+                Status = StepStatus.Pending
+            },
+            "UpdateReferences" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.AddProjectReference,
+                Source = "ProjectA.csproj",
+                Target = "ProjectB.csproj",
+                Status = StepStatus.Pending
+            },
+            "MoveFiles" => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.MoveFile,
+                Source = "src/File.cs",
+                Target = "src/NewFolder/File.cs",
+                Status = StepStatus.Pending
+            },
+            _ => new MigrationStep
+            {
+                Index = _currentPlan.Steps.Count + 1,
+                Action = MigrationAction.MoveFile,
+                Source = "",
+                Target = "",
+                Status = StepStatus.Pending
+            }
+        };
+
+        _currentPlan = MigrationPlanner.AddStep(_currentPlan, step);
+        _selectedStep = step;
+    }
+
+    private string GetActionIcon(MigrationAction action)
+    {
+        return action switch
+        {
+            MigrationAction.MoveFile => "📄",
+            MigrationAction.MoveFolder => "📁",
+            MigrationAction.CopyFile => "📑",
+            MigrationAction.CopyFolder => "📂",
+            MigrationAction.RenameNamespace => "🔤",
+            MigrationAction.AddProjectReference => "➕",
+            MigrationAction.RemoveProjectReference => "➖",
+            MigrationAction.UpdateProjectProperty => "⚙️",
+            _ => "•"
+        };
+    }
+
+    private string GetActionDescription(MigrationAction action)
+    {
+        return action switch
+        {
+            MigrationAction.MoveFile => "Move a single file from the source path to the target path. File references in project files will be updated automatically.",
+            MigrationAction.MoveFolder => "Move an entire folder with all its contents. If the folder contains a .csproj file, project references will be automatically updated.",
+            MigrationAction.CopyFile => "Copy a single file from the source path to the target path. The original file remains unchanged. Useful for duplicating files or creating templates.",
+            MigrationAction.CopyFolder => "Copy an entire folder with all its contents. The original folder remains unchanged. Great for duplicating project structures or creating backups.",
+            MigrationAction.RenameNamespace => "Rename a namespace using Roslyn code analysis. All files using the old namespace will be updated to use the new namespace.",
+            MigrationAction.AddProjectReference => "Add a project reference from the source project to the target project. Updates the .csproj file accordingly.",
+            MigrationAction.RemoveProjectReference => "Remove a project reference from the source project. Only requires the source path.",
+            MigrationAction.UpdateProjectProperty => "Update a property in a project file (.csproj). Source is the project path, target is the property in format 'PropertyName=Value'.",
+            _ => "Unknown action type."
+        };
+    }
+
+    private string GetStepPreview(MigrationStep step)
+    {
+        return step.Action switch
+        {
+            MigrationAction.MoveFile => $"File will be moved:\n{step.Source}\n  ↓\n{step.Target}",
+            MigrationAction.MoveFolder => $"Folder will be moved:\n{step.Source}\n  ↓\n{step.Target}\n\nProject references will be auto-updated.",
+            MigrationAction.CopyFile => $"File will be copied:\n{step.Source}\n  → (copy) →\n{step.Target}\n\nOriginal file remains unchanged.",
+            MigrationAction.CopyFolder => $"Folder will be copied:\n{step.Source}\n  → (copy) →\n{step.Target}\n\nOriginal folder remains unchanged.",
+            MigrationAction.RenameNamespace => $"Namespace will be renamed:\n'{step.Source}' → '{step.Target}'\n\nAll affected files will be updated.",
+            MigrationAction.AddProjectReference => $"Reference will be added:\n{Path.GetFileName(step.Source)}\n  → references →\n{Path.GetFileName(step.Target)}",
+            MigrationAction.RemoveProjectReference => $"Reference will be removed from:\n{Path.GetFileName(step.Source)}",
+            _ => "Preview not available"
+        };
+    }
+
+    private string GetProjectTypeIcon(ProjectType type)
+    {
+        return type switch
+        {
+            ProjectType.ClassLibrary => "📚",
+            ProjectType.Console => "⌨️",
+            ProjectType.Wpf => "🖼️",
+            ProjectType.Test => "🧪",
+            ProjectType.Web => "🌐",
+            ProjectType.Maui => "📱",
+            ProjectType.Blazor => "⚡",
+            _ => "📦"
+        };
+    }
+
+    private void SelectProjectForStep(ProjectInfo project)
+    {
+        if (_selectedStep != null && _currentPlan != null)
+        {
+            // Update the selected step's source with the project path
+            var index = _currentPlan.Steps.ToList().IndexOf(_selectedStep);
+            if (index >= 0)
+            {
+                var updatedStep = _selectedStep with { Source = project.Path };
+                UpdateStep(index, updatedStep);
+            }
+        }
+    }
+
+    private void ClearError()
+    {
+        _errorMessage = string.Empty;
+    }
+
+    private void ClearSuccess()
+    {
+        _successMessage = string.Empty;
+    }
+
+    private async Task ValidatePlanClick()
+    {
+        if (_currentPlan == null) return;
+
+        _errorMessage = "";
+        _successMessage = "";
+        _validationResult = await MigrationPlanner.ValidatePlanAsync(_currentPlan);
+
+        if (_validationResult.IsValid)
+        {
+            _successMessage = "✅ Plan validation successful! Ready to execute.";
+        }
+        else
+        {
+            _errorMessage = $"⚠️ Found {_validationResult.Errors.Count} validation error(s).";
+        }
+    }
+
+    private void ClearAllSteps()
+    {
+        if (_currentPlan == null) return;
+
+        _currentPlan = _currentPlan with { Steps = new List<MigrationStep>(), ModifiedAt = DateTime.UtcNow };
+        _selectedStep = null;
+        _validationResult = null;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

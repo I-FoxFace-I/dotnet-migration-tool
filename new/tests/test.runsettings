@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Configuration for test execution -->
+  <RunConfiguration>
+    <MaxCpuCount>4</MaxCpuCount>
+    <ResultsDirectory>.\TestResults</ResultsDirectory>
+    <TargetFrameworkVersion>net9.0</TargetFrameworkVersion>
+    <!-- Longer timeout for CLI integration tests (5 minutes) -->
+    <TestSessionTimeout>300000</TestSessionTimeout>
+    <TreatTestAdapterErrorsAsWarnings>false</TreatTestAdapterErrorsAsWarnings>
+    <DeleteDeploymentDirectoryAfterTestRunIsComplete>true</DeleteDeploymentDirectoryAfterTestRunIsComplete>
+  </RunConfiguration>
+
+  <!-- xUnit specific configuration -->
+  <xUnit>
+    <DiagnosticMessages>true</DiagnosticMessages>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
+    <MaxParallelThreads>4</MaxParallelThreads>
+    <ShadowCopy>false</ShadowCopy>
+  </xUnit>
+
+  <!-- Code Coverage configuration -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura,opencover</Format>
+          <ExcludeByFile>**/Migrations/**/*.cs,**/*.Designer.cs,**/AssemblyInfo.cs</ExcludeByFile>
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SkipAutoProps>true</SkipAutoProps>
+          <DeterministicReport>true</DeterministicReport>
+          
+          <!-- Include MigrationTool assemblies -->
+          <Include>
+            [MigrationTool.Core]*,
+            [MigrationTool.Core.Abstractions]*,
+            [MigrationTool.Cli]*,
+            [MigrationTool.Localization]*,
+            [MigrationTool.Wpf]*,
+            [MigrationTool.Maui]*,
+            [MigrationTool.Blazor.Server]*
+          </Include>
+          
+          <!-- Exclude test and infrastructure assemblies -->
+          <Exclude>
+            [*.Tests]*,
+            [*.Tests.*]*,
+            [*Tests*]*,
+            [*.UITests]*,
+            [MigrationTool.Tests.Infrastructure]*,
+            [xunit.*]*,
+            [Moq]*,
+            [FluentAssertions]*,
+            [bunit]*
+          </Exclude>
+          
+          <!-- Exclude specific attributes from coverage -->
+          <ExcludeByAttribute>
+            Obsolete,
+            GeneratedCodeAttribute,
+            CompilerGeneratedAttribute,
+            ExcludeFromCodeCoverageAttribute
+          </ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+
+  <!-- Fine Code Coverage specific settings (for VS/Rider extensions) -->
+  <FineCodeCoverage>
+    <Enabled>true</Enabled>
+    <RunWhenTestsFail>true</RunWhenTestsFail>
+    <RunWhenTestsExceed>10000</RunWhenTestsExceed>
+    <RunInParallel>true</RunInParallel>
+    <ThresholdForCyclomaticComplexity>30</ThresholdForCyclomaticComplexity>
+    <ThresholdForNPathComplexity>200</ThresholdForNPathComplexity>
+    <StickyCoverageTable>true</StickyCoverageTable>
+    <NamespacedClasses>true</NamespacedClasses>
+    <HideFullyCovered>false</HideFullyCovered>
+    <CoverageColoursFromFontsAndColours>true</CoverageColoursFromFontsAndColours>
+    
+    <Include>
+      [MigrationTool.*]*
+    </Include>
+    
+    <Exclude>
+      [*.Tests]*
+      [*.Tests.*]*
+      [*Tests*]*
+      [*.UITests]*
+      [MigrationTool.Tests.Infrastructure]*
+    </Exclude>
+    
+    <ExcludeByAttribute>
+      Obsolete
+      GeneratedCodeAttribute
+      CompilerGeneratedAttribute
+      ExcludeFromCodeCoverageAttribute
+    </ExcludeByAttribute>
+    
+    <ExcludeByFile>
+      **/Migrations/**/*.cs
+      **/*.Designer.cs
+      **/AssemblyInfo.cs
+    </ExcludeByFile>
+    
+    <GenerateHtmlReport>false</GenerateHtmlReport>
+  </FineCodeCoverage>
+
+  <!-- Logger configuration -->
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName="console" enabled="true">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+      <Logger friendlyName="trx" enabled="true">
+        <Configuration>
+          <LogFileName>MigrationToolTestResults.trx</LogFileName>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>

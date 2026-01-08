@@ -1,0 +1,22 @@
+@inject ILocalizationService Localization
+
+<div class="language-selector">
+    <select @bind="SelectedLanguage" class="language-dropdown">
+        @foreach (var lang in Localization.SupportedLanguages)
+        {
+            <option value="@lang.Key">@lang.Value</option>
+        }
+    </select>
+</div>
+
+@code {
+    private string SelectedLanguage
+    {
+        get => Localization.CurrentLanguage;
+        set
+        {
+            Localization.CurrentLanguage = value;
+            StateHasChanged();
+        }
+    }
+}

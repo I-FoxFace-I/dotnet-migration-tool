@@ -1,0 +1,242 @@
+@page "/"
+@inject AppState AppState
+@inject ILocalizationService Localization
+@implements IDisposable
+
+<PageTitle>@Localization.Get(Strings.DashboardTitle)</PageTitle>
+
+<div class="dashboard-container">
+    <h1>@Localization.Get(Strings.DashboardTitle)</h1>
+    <p class="description">@Localization.Get(Strings.DashboardDescription)</p>
+
+    @if (!AppState.HasSolution)
+    {
+        <div class="empty-state">
+            <p>@Localization.Get(Strings.NoProjectsLoaded)</p>
+            <p><a href="/settings">@Localization.Get(Strings.NavSettings)</a></p>
+        </div>
+    }
+    else
+    {
+        <div class="stats-grid">
+            <StatCard Icon="📦" Label="@Localization.Get(Strings.TotalProjects)" Value="@AppState.CurrentSolution!.ProjectCount" ColorClass="primary" />
+            <StatCard Icon="🧪" Label="@Localization.Get(Strings.TestProjects)" Value="@AppState.CurrentSolution.TestProjectCount" ColorClass="success" />
+            <StatCard Icon="📄" Label="@Localization.Get(Strings.SourceFiles)" Value="@FileCount" ColorClass="info" />
+            <StatCard Icon="📚" Label="@Localization.Get(Strings.TotalClasses)" Value="@AppState.CurrentSolution.Projects.Sum(p => p.ClassCount)" ColorClass="warning" />
+            <StatCard Icon="✅" Label="@Localization.Get(Strings.TotalTests)" Value="@AppState.CurrentSolution.Projects.Sum(p => p.TestCount)" ColorClass="danger" />
+        </div>
+
+        <div class="solution-info">
+            <h2>@AppState.CurrentSolution.Name</h2>
+            <p><strong>@Localization.Get(Strings.FilePath):</strong> @AppState.CurrentSolution.Path</p>
+        </div>
+
+        <div class="dashboard-details">
+            <div class="detail-section">
+                <h3>📊 Project Types</h3>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (type, count) in ProjectTypeCounts.OrderByDescending(x => x.Value))
+                        {
+                            <tr>
+                                <td>@type</td>
+                                <td>@count</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-section">
+                <h3>🔗 Dependencies Overview</h3>
+                <div class="dependencies-stats">
+                    <div class="stat-item">
+                        <strong>Project References:</strong> @TotalProjectReferences
+                    </div>
+                    <div class="stat-item">
+                        <strong>Package References:</strong> @TotalPackageReferences
+                    </div>
+                </div>
+                
+                @if (TopPackages.Any())
+                {
+                    <details class="packages-expander">
+                        <summary>📦 Top Packages (@TopPackages.Count())</summary>
+                        <ul class="packages-list">
+                            @foreach (var pkg in TopPackages.Take(20))
+                            {
+                                <li>@pkg</li>
+                            }
+                            @if (TopPackages.Count() > 20)
+                            {
+                                <li class="text-muted">... and @(TopPackages.Count() - 20) more</li>
+                            }
+                        </ul>
+                    </details>
+                }
+            </div>
+        </div>
+
+        <div class="project-list-section">
+            <h3>📦 @Localization.Get(Strings.TotalProjects)</h3>
+            
+            <div class="filter-controls">
+                <input type="text" 
+                       class="form-control search-input" 
+                       placeholder="@Localization.Get(Strings.Select)..." 
+                       @bind="_searchQuery" 
+                       @bind:event="oninput" />
+                
+                <div class="filter-checkboxes">
+                    <label>
+                        <input type="checkbox" @bind="_showSourceProjects" />
+                        Source Projects
+                    </label>
+                    <label>
+                        <input type="checkbox" @bind="_showTestProjects" />
+                        @Localization.Get(Strings.TestProjects)
+                    </label>
+                </div>
+            </div>
+
+            @if (FilteredProjects.Any())
+            {
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>@Localization.Get(Strings.CommonName)</th>
+                            <th>@Localization.Get(Strings.Type)</th>
+                            <th>Framework</th>
+                            <th>Files</th>
+                            <th>Classes</th>
+                            <th>Tests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var project in FilteredProjects)
+                        {
+                            <tr>
+                                <td>@(project.IsTestProject ? "🧪" : "📝")</td>
+                                <td><strong>@project.Name</strong></td>
+                                <td>@project.ProjectType</td>
+                                <td>@(project.TargetFramework ?? "—")</td>
+                                <td>@project.FileCount</td>
+                                <td>@project.ClassCount</td>
+                                <td>@project.TestCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <p>@Localization.Get(Strings.NoData)</p>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string _searchQuery = "";
+    private bool _showSourceProjects = true;
+    private bool _showTestProjects = true;
+
+    private int FileCount => AppState.CurrentSolution?.Projects.Sum(p => p.FileCount) ?? 0;
+
+    private Dictionary<ProjectType, int> ProjectTypeCounts => 
+        AppState.CurrentSolution?.Projects
+            .GroupBy(p => p.ProjectType)
+            .ToDictionary(g => g.Key, g => g.Count())
+        ?? new Dictionary<ProjectType, int>();
+
+    private int TotalProjectReferences
+    {
+        get
+        {
+            var refs = new HashSet<string>();
+            foreach (var project in AppState.CurrentSolution?.Projects ?? [])
+            {
+                foreach (var pref in project.ProjectReferences)
+                {
+                    refs.Add(pref.Name);
+                }
+            }
+            return refs.Count;
+        }
+    }
+
+    private int TotalPackageReferences
+    {
+        get
+        {
+            var pkgs = new HashSet<string>();
+            foreach (var project in AppState.CurrentSolution?.Projects ?? [])
+            {
+                foreach (var pkg in project.PackageReferences)
+                {
+                    pkgs.Add(pkg.Name);
+                }
+            }
+            return pkgs.Count;
+        }
+    }
+
+    private IEnumerable<string> TopPackages
+    {
+        get
+        {
+            var pkgs = new HashSet<string>();
+            foreach (var project in AppState.CurrentSolution?.Projects ?? [])
+            {
+                foreach (var pkg in project.PackageReferences)
+                {
+                    pkgs.Add(pkg.Name);
+                }
+            }
+            return pkgs.OrderBy(p => p);
+        }
+    }
+
+    private IEnumerable<ProjectInfo> FilteredProjects
+    {
+        get
+        {
+            IEnumerable<ProjectInfo> projects = AppState.CurrentSolution?.Projects ?? [];
+            
+            // Apply type filter
+            projects = projects.Where(p =>
+                (p.IsTestProject && _showTestProjects) ||
+                (!p.IsTestProject && _showSourceProjects)
+            );
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchQuery))
+            {
+                projects = projects.Where(p =>
+                    p.Name.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase)
+                );
+            }
+
+            return projects;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,339 @@
+@using MigrationTool.Core.Abstractions.Models
+
+<div class="dependency-graph-container">
+    <div class="graph-controls">
+        <label>
+            <input type="checkbox" @bind="_showTestProjects" @bind:event="onchange" />
+            Show Test Projects
+        </label>
+        <label>
+            <input type="checkbox" @bind="_showOrphans" @bind:event="onchange" />
+            Show Isolated Projects
+        </label>
+    </div>
+    
+    <svg class="dependency-graph" viewBox="@GetViewBox()" xmlns="http://www.w3.org/2000/svg">
+        <!-- Define arrow marker for dependencies -->
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#3498db" />
+            </marker>
+            <marker id="arrowhead-warning" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#f39c12" />
+            </marker>
+        </defs>
+        
+        <!-- Draw edges (dependencies) first so they appear behind nodes -->
+        @foreach (var edge in GetEdges())
+        {
+            <line x1="@edge.X1" y1="@edge.Y1" x2="@edge.X2" y2="@edge.Y2" 
+                  class="dependency-edge @(edge.IsWarning ? "warning" : "")"
+                  marker-end="url(#@(edge.IsWarning ? "arrowhead-warning" : "arrowhead"))"
+                  stroke="@(edge.IsWarning ? "#f39c12" : "#3498db")"
+                  stroke-width="2"
+                  opacity="0.6">
+                <title>@edge.Tooltip</title>
+            </line>
+        }
+        
+        <!-- Draw nodes (projects) -->
+        @foreach (var node in GetNodes())
+        {
+            <g class="project-node @node.CssClass" transform="translate(@node.X, @node.Y)">
+                <!-- Node background -->
+                <rect x="-60" y="-30" width="120" height="60" 
+                      rx="8" ry="8"
+                      fill="@node.Color"
+                      stroke="@node.BorderColor"
+                      stroke-width="2"
+                      class="node-rect" />
+                
+                <!-- Project icon -->
+                <text x="0" y="-5" text-anchor="middle" font-size="20">@node.Icon</text>
+                
+                <!-- Project name -->
+                <text x="0" y="15" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">
+                    @node.ShortName
+                </text>
+                
+                <!-- Tooltip -->
+                <title>@node.Tooltip</title>
+            </g>
+        }
+    </svg>
+    
+    <div class="graph-legend">
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #3498db;">📦</span>
+            <span>Source Project</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #2ecc71;">✅</span>
+            <span>Test Project</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #9b59b6;">🖥️</span>
+            <span>UI Project (WPF/Blazor/MAUI)</span>
+        </div>
+        <div class="legend-item">
+            <span style="color: #3498db;">→</span>
+            <span>Dependency</span>
+        </div>
+    </div>
+    
+    <div class="graph-stats">
+        <strong>Graph Statistics:</strong>
+        <span>@GetNodes().Count() nodes</span>
+        <span>@GetEdges().Count() dependencies</span>
+        <span>@GetCyclicDependencies() cyclic dependencies</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<ProjectInfo> Projects { get; set; } = [];
+    
+    private bool _showTestProjects = true;
+    private bool _showOrphans = true;
+    
+    private IEnumerable<ProjectNode> GetNodes()
+    {
+        var filteredProjects = Projects.AsEnumerable();
+        
+        if (!_showTestProjects)
+        {
+            filteredProjects = filteredProjects.Where(p => p.ProjectType != ProjectType.Test);
+        }
+        
+        if (!_showOrphans)
+        {
+            var projectsWithDeps = new HashSet<string>(
+                filteredProjects
+                    .Where(p => p.ProjectReferences.Any())
+                    .Select(p => p.Name)
+            );
+            var referencedProjects = new HashSet<string>(
+                filteredProjects
+                    .SelectMany(p => p.ProjectReferences.Select(r => r.Name))
+            );
+            
+            filteredProjects = filteredProjects.Where(p => 
+                projectsWithDeps.Contains(p.Name) || referencedProjects.Contains(p.Name)
+            );
+        }
+        
+        var projectList = filteredProjects.ToList();
+        var layout = CalculateLayout(projectList);
+        
+        return projectList.Select((p, i) => new ProjectNode
+        {
+            Project = p,
+            X = layout[i].X,
+            Y = layout[i].Y,
+            ShortName = ShortenName(p.Name),
+            Icon = GetProjectIcon(p.ProjectType),
+            Color = GetProjectColor(p.ProjectType),
+            BorderColor = GetProjectBorderColor(p.ProjectType),
+            CssClass = p.ProjectType.ToString().ToLower(),
+            Tooltip = $"{p.Name}\nType: {p.ProjectType}\nReferences: {p.ProjectReferences.Count()}\nReferenced by: {GetReferencedByCount(p)}"
+        });
+    }
+    
+    private IEnumerable<DependencyEdge> GetEdges()
+    {
+        var nodes = GetNodes().ToList();
+        var nodeDict = nodes.ToDictionary(n => n.Project.Name, n => n);
+        var edges = new List<DependencyEdge>();
+        
+        foreach (var node in nodes)
+        {
+            foreach (var dep in node.Project.ProjectReferences)
+            {
+                if (nodeDict.TryGetValue(dep.Name, out var targetNode))
+                {
+                    // Check for cyclic dependency
+                    bool isCyclic = targetNode.Project.ProjectReferences
+                        .Any(r => r.Name == node.Project.Name);
+                    
+                    edges.Add(new DependencyEdge
+                    {
+                        X1 = node.X,
+                        Y1 = node.Y,
+                        X2 = targetNode.X,
+                        Y2 = targetNode.Y,
+                        IsWarning = isCyclic,
+                        Tooltip = $"{node.Project.Name} → {dep.Name}" + (isCyclic ? " (CYCLIC!)" : "")
+                    });
+                }
+            }
+        }
+        
+        return edges;
+    }
+    
+    private List<(double X, double Y)> CalculateLayout(List<ProjectInfo> projects)
+    {
+        if (!projects.Any())
+            return new List<(double, double)>();
+        
+        // Group projects by type for better layout
+        var groups = projects
+            .GroupBy(p => p.ProjectType)
+            .OrderBy(g => g.Key == ProjectType.Test ? 2 : (IsUiProject(g.Key) ? 1 : 0))
+            .ToList();
+        
+        var layout = new List<(double X, double Y)>();
+        var nodeWidth = 120;
+        var nodeHeight = 60;
+        var horizontalSpacing = 180;
+        var verticalSpacing = 100;
+        
+        var currentY = 50;
+        
+        foreach (var group in groups)
+        {
+            var groupProjects = group.ToList();
+            var columns = Math.Max(1, (int)Math.Ceiling(Math.Sqrt(groupProjects.Count)));
+            var rows = (int)Math.Ceiling((double)groupProjects.Count / columns);
+            
+            for (int i = 0; i < groupProjects.Count; i++)
+            {
+                var row = i / columns;
+                var col = i % columns;
+                
+                var x = 100 + col * horizontalSpacing;
+                var y = currentY + row * verticalSpacing;
+                
+                layout.Add((x, y));
+            }
+            
+            currentY += rows * verticalSpacing + 50;
+        }
+        
+        return layout;
+    }
+    
+    private string GetViewBox()
+    {
+        var nodes = GetNodes().ToList();
+        if (!nodes.Any())
+            return "0 0 800 600";
+        
+        var minX = nodes.Min(n => n.X) - 100;
+        var maxX = nodes.Max(n => n.X) + 100;
+        var minY = nodes.Min(n => n.Y) - 50;
+        var maxY = nodes.Max(n => n.Y) + 50;
+        
+        var width = maxX - minX;
+        var height = maxY - minY;
+        
+        return $"{minX} {minY} {width} {height}";
+    }
+    
+    private string ShortenName(string name)
+    {
+        // Remove common prefixes
+        var shortened = name
+            .Replace("MigrationTool.", "")
+            .Replace("MigrationTool", "");
+        
+        // If still too long, abbreviate
+        if (shortened.Length > 15)
+        {
+            var parts = shortened.Split('.');
+            if (parts.Length > 1)
+            {
+                // Take first letter of each part except last
+                var abbreviated = string.Join(".", 
+                    parts.Take(parts.Length - 1).Select(p => p[0].ToString())
+                ) + "." + parts.Last();
+                
+                return abbreviated.Length < shortened.Length ? abbreviated : shortened.Substring(0, 15) + "...";
+            }
+            
+            return shortened.Substring(0, 15) + "...";
+        }
+        
+        return shortened;
+    }
+    
+    private string GetProjectIcon(ProjectType type) => type switch
+    {
+        ProjectType.Test => "✅",
+        ProjectType.Wpf => "🖥️",
+        ProjectType.Blazor => "🌐",
+        ProjectType.Maui => "📱",
+        ProjectType.Console => "⌨️",
+        ProjectType.Web => "🌍",
+        _ => "📦"
+    };
+    
+    private string GetProjectColor(ProjectType type) => type switch
+    {
+        ProjectType.Test => "#d5f4e6",
+        ProjectType.Wpf or ProjectType.Blazor or ProjectType.Maui or ProjectType.Web => "#e8daef",
+        ProjectType.Console => "#fef5e7",
+        _ => "#d6eaf8"
+    };
+    
+    private string GetProjectBorderColor(ProjectType type) => type switch
+    {
+        ProjectType.Test => "#2ecc71",
+        ProjectType.Wpf or ProjectType.Blazor or ProjectType.Maui or ProjectType.Web => "#9b59b6",
+        ProjectType.Console => "#f39c12",
+        _ => "#3498db"
+    };
+    
+    private bool IsUiProject(ProjectType type) =>
+        type == ProjectType.Wpf || type == ProjectType.Blazor || 
+        type == ProjectType.Maui || type == ProjectType.Web;
+    
+    private int GetReferencedByCount(ProjectInfo project)
+    {
+        return Projects.Count(p => p.ProjectReferences.Any(r => r.Name == project.Name));
+    }
+    
+    private int GetCyclicDependencies()
+    {
+        int count = 0;
+        var nodes = GetNodes().ToList();
+        
+        foreach (var node in nodes)
+        {
+            foreach (var dep in node.Project.ProjectReferences)
+            {
+                var targetProject = Projects.FirstOrDefault(p => p.Name == dep.Name);
+                if (targetProject != null && 
+                    targetProject.ProjectReferences.Any(r => r.Name == node.Project.Name))
+                {
+                    count++;
+                }
+            }
+        }
+        
+        return count / 2; // Each cycle is counted twice
+    }
+    
+    private class ProjectNode
+    {
+        public ProjectInfo Project { get; set; } = null!;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public string ShortName { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public string Color { get; set; } = "";
+        public string BorderColor { get; set; } = "";
+        public string CssClass { get; set; } = "";
+        public string Tooltip { get; set; } = "";
+    }
+    
+    private class DependencyEdge
+    {
+        public double X1 { get; set; }
+        public double Y1 { get; set; }
+        public double X2 { get; set; }
+        public double Y2 { get; set; }
+        public bool IsWarning { get; set; }
+        public string Tooltip { get; set; } = "";
+    }
+}

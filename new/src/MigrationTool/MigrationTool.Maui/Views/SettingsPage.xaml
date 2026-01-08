@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MigrationTool.Maui.ViewModels"
+             x:Class="MigrationTool.Maui.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Solution Section -->
+            <Frame Padding="20" BorderColor="{StaticResource Primary}">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="📂 Solution" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+                    
+                    <!-- Solution Path Input -->
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <Entry Grid.Column="0" 
+                               Text="{Binding SolutionPath}" 
+                               Placeholder="Select .sln file..."
+                               IsReadOnly="True"/>
+                        <Button Grid.Column="1" 
+                                Text="📁 Browse" 
+                                Command="{Binding BrowseSolutionCommand}"
+                                BackgroundColor="{StaticResource Gray200}"
+                                TextColor="{StaticResource Gray900}"/>
+                        <Button Grid.Column="2" 
+                                Text="▶️ Load" 
+                                Command="{Binding LoadSolutionCommand}"
+                                IsEnabled="{Binding SolutionPath, Converter={StaticResource IsNotNullConverter}}"
+                                BackgroundColor="{StaticResource Primary}"/>
+                    </Grid>
+
+                    <!-- Loading Indicator -->
+                    <ActivityIndicator IsRunning="{Binding IsLoadingSolution}" 
+                                       IsVisible="{Binding IsLoadingSolution}"
+                                       Color="{StaticResource Primary}"/>
+
+                    <!-- Status Message -->
+                    <Label Text="{Binding StatusMessage}" 
+                           IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotNullConverter}}"
+                           TextColor="{StaticResource Gray500}"
+                           FontSize="12"/>
+
+                    <!-- Current Solution Info -->
+                    <Frame IsVisible="{Binding HasSolution}" 
+                           Padding="15" 
+                           BackgroundColor="{StaticResource Gray100}">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="Current Solution:" FontSize="12" TextColor="{StaticResource Gray500}"/>
+                                <Label Text="{Binding SolutionName}" FontAttributes="Bold"/>
+                                <Label Text="{Binding WorkspacePath}" FontSize="11" TextColor="{StaticResource Gray500}"/>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1" 
+                                    Text="🔄" 
+                                    Command="{Binding RefreshSolutionCommand}"
+                                    BackgroundColor="{StaticResource Gray200}"
+                                    TextColor="{StaticResource Gray900}"
+                                    WidthRequest="50"/>
+                            <Button Grid.Column="2" 
+                                    Text="❌" 
+                                    Command="{Binding ClearSolutionCommand}"
+                                    BackgroundColor="{StaticResource Gray200}"
+                                    TextColor="Red"
+                                    WidthRequest="50"/>
+                        </Grid>
+                    </Frame>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Language Section -->
+            <Frame Padding="20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="🌐 Language" FontSize="18" FontAttributes="Bold"/>
+                    
+                    <Picker ItemsSource="{Binding Languages}"
+                            ItemDisplayBinding="{Binding DisplayName}"
+                            SelectedItem="{Binding SelectedLanguageOption}"
+                            Title="Select language">
+                    </Picker>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Theme Section -->
+            <Frame Padding="20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="🎨 Theme" FontSize="18" FontAttributes="Bold"/>
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Dark Mode" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding IsDarkTheme}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Developer Tools Section -->
+            <Frame Padding="20" BorderColor="{StaticResource Secondary}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="🔧 Developer Tools" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Secondary}"/>
+                    
+                    <Button Text="🔍 Validate ViewModel Bindings" 
+                            Command="{Binding ValidateBindingsCommand}"
+                            BackgroundColor="{StaticResource Secondary}"/>
+                    
+                    <Label Text="Checks that all ViewModel properties and commands are correctly generated for XAML bindings."
+                           FontSize="12"
+                           TextColor="{StaticResource Gray500}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- About Section -->
+            <Frame Padding="20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="ℹ️ About" FontSize="18" FontAttributes="Bold"/>
+                    
+                    <Label Text="Migration Tool" FontAttributes="Bold" FontSize="16"/>
+                    <Label Text="Version 1.0.0" TextColor="{StaticResource Gray500}"/>
+                    <Label Text=".NET Project Migration &amp; Refactoring Tool" TextColor="{StaticResource Gray500}"/>
+                    
+                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,10"/>
+                    
+                    <Label Text="Built with:" FontAttributes="Bold"/>
+                    <Label Text="• .NET 9.0 &amp; MAUI" TextColor="{StaticResource Gray500}"/>
+                    <Label Text="• Roslyn Analyzers" TextColor="{StaticResource Gray500}"/>
+                    <Label Text="• CommunityToolkit.Mvvm" TextColor="{StaticResource Gray500}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

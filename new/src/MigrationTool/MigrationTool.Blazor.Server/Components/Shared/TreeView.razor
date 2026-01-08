@@ -1,0 +1,251 @@
+@typeparam TItem
+
+<div class="tree-view">
+    @if (Items != null && Items.Any())
+    {
+        <ul class="tree-root">
+            @foreach (var item in Items)
+            {
+                <TreeNode Item="item" 
+                          GetChildren="GetChildren" 
+                          GetDisplayName="GetDisplayName"
+                          GetIcon="GetIcon"
+                          OnItemSelected="OnItemSelected"
+                          SelectedItem="SelectedItem"
+                          IsExpanded="IsItemExpanded(item)" />
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="tree-empty">
+            <span class="empty-icon">📂</span>
+            <p>No items to display</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public Func<TItem, IEnumerable<TItem>>? GetChildren { get; set; }
+    [Parameter] public Func<TItem, string>? GetDisplayName { get; set; }
+    [Parameter] public Func<TItem, string>? GetIcon { get; set; }
+    [Parameter] public EventCallback<TItem> OnItemSelected { get; set; }
+    [Parameter] public TItem? SelectedItem { get; set; }
+    
+    private HashSet<TItem> _expandedItems = new();
+
+    private bool IsItemExpanded(TItem item)
+    {
+        return _expandedItems.Contains(item);
+    }
+}
+
+@* Tree Node Component *@
+@code {
+    public class TreeNode : ComponentBase
+    {
+        [Parameter] public TItem? Item { get; set; }
+        [Parameter] public Func<TItem, IEnumerable<TItem>>? GetChildren { get; set; }
+        [Parameter] public Func<TItem, string>? GetDisplayName { get; set; }
+        [Parameter] public Func<TItem, string>? GetIcon { get; set; }
+        [Parameter] public EventCallback<TItem> OnItemSelected { get; set; }
+        [Parameter] public TItem? SelectedItem { get; set; }
+        [Parameter] public bool IsExpanded { get; set; }
+
+        private bool _isExpanded;
+        private IEnumerable<TItem>? _children;
+
+        protected override void OnParametersSet()
+        {
+            _isExpanded = IsExpanded;
+            if (Item != null && GetChildren != null)
+            {
+                _children = GetChildren(Item);
+            }
+        }
+
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+        {
+            if (Item == null) return;
+
+            var hasChildren = _children?.Any() ?? false;
+            var isSelected = SelectedItem != null && SelectedItem.Equals(Item);
+            var displayName = GetDisplayName?.Invoke(Item) ?? Item.ToString() ?? "";
+            var icon = GetIcon?.Invoke(Item) ?? "📄";
+
+            builder.OpenElement(0, "li");
+            builder.AddAttribute(1, "class", "tree-node");
+
+            // Node content
+            builder.OpenElement(2, "div");
+            builder.AddAttribute(3, "class", $"tree-node-content {(isSelected ? "selected" : "")}");
+            builder.AddAttribute(4, "onclick", EventCallback.Factory.Create(this, () => HandleNodeClick()));
+
+            // Expand/collapse button
+            if (hasChildren)
+            {
+                builder.OpenElement(5, "button");
+                builder.AddAttribute(6, "class", "tree-expand-btn");
+                builder.AddAttribute(7, "onclick", EventCallback.Factory.Create(this, ToggleExpand));
+                builder.AddAttribute(8, "onclick:stopPropagation", true);
+                builder.AddContent(9, _isExpanded ? "▼" : "▶");
+                builder.CloseElement(); // button
+            }
+            else
+            {
+                builder.OpenElement(9, "span");
+                builder.AddAttribute(10, "class", "tree-expand-spacer");
+                builder.CloseElement(); // span
+            }
+
+            // Icon
+            builder.OpenElement(11, "span");
+            builder.AddAttribute(12, "class", "tree-icon");
+            builder.AddContent(13, icon);
+            builder.CloseElement(); // span
+
+            // Display name
+            builder.OpenElement(14, "span");
+            builder.AddAttribute(15, "class", "tree-label");
+            builder.AddContent(16, displayName);
+            builder.CloseElement(); // span
+
+            builder.CloseElement(); // div.tree-node-content
+
+            // Children
+            if (hasChildren && _isExpanded)
+            {
+                builder.OpenElement(17, "ul");
+                builder.AddAttribute(18, "class", "tree-children");
+
+                foreach (var child in _children!)
+                {
+                    builder.OpenComponent<TreeNode>(19);
+                    builder.AddAttribute(20, "Item", child);
+                    builder.AddAttribute(21, "GetChildren", GetChildren);
+                    builder.AddAttribute(22, "GetDisplayName", GetDisplayName);
+                    builder.AddAttribute(23, "GetIcon", GetIcon);
+                    builder.AddAttribute(24, "OnItemSelected", OnItemSelected);
+                    builder.AddAttribute(25, "SelectedItem", SelectedItem);
+                    builder.AddAttribute(26, "IsExpanded", false);
+                    builder.CloseComponent();
+                }
+
+                builder.CloseElement(); // ul.tree-children
+            }
+
+            builder.CloseElement(); // li.tree-node
+        }
+
+        private void ToggleExpand()
+        {
+            _isExpanded = !_isExpanded;
+            StateHasChanged();
+        }
+
+        private async Task HandleNodeClick()
+        {
+            if (Item != null)
+            {
+                await OnItemSelected.InvokeAsync(Item);
+            }
+        }
+    }
+}
+
+<style>
+    .tree-view {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .tree-root,
+    .tree-children {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .tree-children {
+        padding-left: 1.25rem;
+    }
+
+    .tree-node {
+        margin: 0;
+    }
+
+    .tree-node-content {
+        display: flex;
+        align-items: center;
+        padding: 0.35rem 0.5rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.15s ease;
+        gap: 0.35rem;
+    }
+
+    .tree-node-content:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+
+    .tree-node-content.selected {
+        background-color: rgba(0, 123, 255, 0.2);
+        font-weight: 600;
+    }
+
+    .tree-expand-btn {
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: #6c757d;
+        transition: transform 0.2s ease;
+    }
+
+    .tree-expand-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .tree-expand-spacer {
+        width: 18px;
+        display: inline-block;
+    }
+
+    .tree-icon {
+        font-size: 1rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .tree-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .tree-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .tree-empty p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+</style>

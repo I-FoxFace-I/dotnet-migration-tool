@@ -1,0 +1,654 @@
+@page "/explorer"
+@using MigrationTool.Blazor.Server.Components.Shared
+@using MigrationTool.Core.Abstractions.Models
+@inject AppState AppState
+@inject IProjectAnalyzer ProjectAnalyzer
+@inject ILocalizationService Localization
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<PageTitle>@Localization.Get(Strings.ProjectExplorerTitle)</PageTitle>
+
+<div class="explorer-container">
+    <h1>@Localization.Get(Strings.ProjectExplorerTitle)</h1>
+    <p class="description">@Localization.Get(Strings.ProjectExplorerDescription)</p>
+
+    @if (!AppState.HasSolution)
+    {
+        <div class="empty-state">
+            <p>@Localization.Get(Strings.NoProjectsLoaded)</p>
+            <p><a href="/settings">@Localization.Get(Strings.NavSettings)</a></p>
+        </div>
+    }
+    else if (_isLoading)
+    {
+        <LoadingSpinner Message="@Localization.Get(Strings.Loading)" />
+    }
+    else
+    {
+        <div class="explorer-toolbar">
+            <div class="view-tabs">
+                <button class="tab @(_viewMode == ViewMode.Tree ? "active" : "")" @onclick="() => _viewMode = ViewMode.Tree">
+                    🌲 Tree
+                </button>
+                <button class="tab @(_viewMode == ViewMode.Files ? "active" : "")" @onclick="() => _viewMode = ViewMode.Files">
+                    📂 Files
+                </button>
+                <button class="tab @(_viewMode == ViewMode.List ? "active" : "")" @onclick="() => _viewMode = ViewMode.List">
+                    📋 List
+                </button>
+                <button class="tab @(_viewMode == ViewMode.Classes ? "active" : "")" @onclick="() => _viewMode = ViewMode.Classes">
+                    📦 Classes
+                </button>
+                <button class="tab @(_viewMode == ViewMode.Tests ? "active" : "")" @onclick="() => _viewMode = ViewMode.Tests">
+                    🧪 Tests
+                </button>
+            </div>
+            
+            @if (_selectedFiles.Any())
+            {
+                <div class="selection-actions">
+                    <span class="selection-count">@_selectedFiles.Count selected</span>
+                    <button class="btn btn-primary btn-sm" @onclick="AddToMigrationPlan">
+                        ➕ Add to Migration Plan
+                    </button>
+                    <button class="btn btn-secondary btn-sm" @onclick="ClearSelection">
+                        Clear
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="explorer-layout">
+            <div class="projects-panel">
+                <h2>@Localization.Get(Strings.Project) (@_projects.Count)</h2>
+                <div class="project-list">
+                    @foreach (var group in GetProjectGroups())
+                    {
+                        <div class="project-group">
+                            <div class="project-group-header">
+                                <span class="project-group-icon">📁</span>
+                                <span>@group.Key</span>
+                                <span class="text-muted">(@group.Value.Count())</span>
+                            </div>
+                            <ul>
+                                @foreach (var project in group.Value)
+                                {
+                                    <li class="@(_selectedProject == project ? "selected" : "")" @onclick="() => SelectProject(project)">
+                                        <span class="project-icon">@(project.IsTestProject ? "🧪" : "📦")</span>
+                                        <span class="project-name">@project.Name</span>
+                                        @if (project.IsTestProject)
+                                        {
+                                            <span class="badge test-badge">Test</span>
+                                        }
+                                        <span class="file-count">@project.FileCount</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="details-panel">
+                @if (_selectedProject != null)
+                {
+                    <div class="project-header">
+                        <h2>@_selectedProject.Name</h2>
+                        <div class="project-stats">
+                            <span class="stat">📄 @_selectedProject.FileCount files</span>
+                            <span class="stat">📦 @_selectedProject.ClassCount classes</span>
+                            @if (_selectedProject.IsTestProject)
+                            {
+                                <span class="stat">🧪 @_selectedProject.TestCount tests</span>
+                            }
+                        </div>
+                    </div>
+
+                    @switch (_viewMode)
+                    {
+                        case ViewMode.Tree:
+                            <div class="tree-view">
+                                @RenderFileTree(_fileTree)
+                            </div>
+                            break;
+                            
+                        case ViewMode.Files:
+                            <div class="files-tree-view">
+                                <div class="tree-column">
+                                    <h4>📂 File Tree</h4>
+                                    <TreeView TItem="FileTreeNode"
+                                              Items="GetFileTreeRootNodes()"
+                                              GetChildren="(node) => node.Children?.Values ?? Enumerable.Empty<FileTreeNode>()"
+                                              GetDisplayName="(node) => node.Name"
+                                              GetIcon="GetTreeNodeIcon"
+                                              OnItemSelected="OnFileTreeNodeSelected"
+                                              SelectedItem="_selectedTreeNode" />
+                                </div>
+                                <div class="detail-column">
+                                    <h4>📄 File Details</h4>
+                                    <FileDetail FileInfo="_selectedFileDetail" />
+                                </div>
+                            </div>
+                            break;
+                            
+                        case ViewMode.List:
+                            <div class="file-list-view">
+                                @foreach (var file in _selectedProject.SourceFiles.OrderBy(f => f.Name))
+                                {
+                                    <div class="file-item @(_selectedFile == file ? "selected" : "") @(_selectedFiles.Contains(file) ? "checked" : "")" 
+                                         @onclick="() => SelectFile(file)">
+                                        <input type="checkbox" checked="@_selectedFiles.Contains(file)" 
+                                               @onclick:stopPropagation="true"
+                                               @onchange="(e) => ToggleFileSelection(file, (bool?)e.Value ?? false)" />
+                                        <span class="file-icon">📄</span>
+                                        <span class="file-name">@file.Name</span>
+                                        <span class="file-path text-muted">@GetRelativePath(file.Path)</span>
+                                    </div>
+                                }
+                            </div>
+                            break;
+                            
+                        case ViewMode.Classes:
+                            <div class="classes-view">
+                                @foreach (var file in _selectedProject.SourceFiles.Where(f => f.Classes.Any()))
+                                {
+                                    <div class="class-group">
+                                        <div class="class-file-header">📄 @file.Name</div>
+                                        @foreach (var cls in file.Classes)
+                                        {
+                                            <div class="class-item">
+                                                <span class="class-icon">@GetTypeIcon(cls.Kind)</span>
+                                                <span class="class-name">@cls.Name</span>
+                                                @if (!string.IsNullOrEmpty(cls.Namespace))
+                                                {
+                                                    <span class="class-namespace text-muted">@cls.Namespace</span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            break;
+                            
+                        case ViewMode.Tests:
+                            @if (_selectedProject.IsTestProject)
+                            {
+                                <div class="tests-view">
+                                    <!-- Summary metrics -->
+                                    <div class="test-summary">
+                                        <div class="stat-item">
+                                            <strong>Total Tests:</strong> @_selectedProject.TestCount
+                                        </div>
+                                        <div class="stat-item">
+                                            <strong>Test Classes:</strong> @GetTestClassCount()
+                                        </div>
+                                        <div class="stat-item">
+                                            <strong>Test Files:</strong> @_selectedProject.SourceFiles.Count(f => f.IsTestFile)
+                                        </div>
+                                    </div>
+
+                                    <hr style="margin: 1rem 0;" />
+
+                                    <!-- Grouped by class with expanders -->
+                                    <h4>Tests by Class</h4>
+                                    @foreach (var (className, tests) in GetTestsByClass())
+                                    {
+                                        <details class="test-class-expander" open>
+                                            <summary>
+                                                🧪 <strong>@className</strong> 
+                                                <span class="test-count-badge">@tests.Count() tests</span>
+                                            </summary>
+                                            <div class="test-methods-list">
+                                                @foreach (var test in tests)
+                                                {
+                                                    <div class="test-method">
+                                                        <span class="test-icon">✅</span>
+                                                        <span class="test-name">@test.Name</span>
+                                                        <span class="test-framework text-muted">[@test.Framework]</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </details>
+                                    }
+
+                                    <hr style="margin: 1.5rem 0;" />
+
+                                    <!-- Alternative: Flat table view -->
+                                    <h4>All Tests</h4>
+                                    <table class="tests-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Test Name</th>
+                                                <th>Class</th>
+                                                <th>File</th>
+                                                <th>Framework</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var (test, className, fileName) in GetAllTestsFlat())
+                                            {
+                                                <tr>
+                                                    <td>@test.Name</td>
+                                                    <td>@className</td>
+                                                    <td>@fileName</td>
+                                                    <td>@test.Framework</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <p>This is not a test project.</p>
+                                </div>
+                            }
+                            break;
+                    }
+
+                    @if (_selectedFile != null)
+                    {
+                        <div class="file-details">
+                            <h3>📄 @_selectedFile.Name</h3>
+                            <div class="file-info">
+                                <p><strong>Path:</strong> @_selectedFile.Path</p>
+                                <p><strong>Namespace:</strong> @(_selectedFile.Namespace ?? "N/A")</p>
+                                <p><strong>Lines:</strong> @_selectedFile.LineCount</p>
+                                <p><strong>Classes:</strong> @_selectedFile.Classes.Count</p>
+                            </div>
+                            @if (_selectedFile.Usings.Any())
+                            {
+                                <details>
+                                    <summary>Usings (@_selectedFile.Usings.Count)</summary>
+                                    <ul class="usings-list">
+                                        @foreach (var u in _selectedFile.Usings.Take(10))
+                                        {
+                                            <li>@u</li>
+                                        }
+                                        @if (_selectedFile.Usings.Count > 10)
+                                        {
+                                            <li class="text-muted">... and @(_selectedFile.Usings.Count - 10) more</li>
+                                        }
+                                    </ul>
+                                </details>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <p class="hint">@Localization.Get(Strings.Select)</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private enum ViewMode { Tree, Files, List, Classes, Tests }
+    
+    private List<ProjectInfo> _projects = [];
+    private ProjectInfo? _selectedProject;
+    private SourceFileInfo? _selectedFile;
+    private HashSet<SourceFileInfo> _selectedFiles = [];
+    private FileTreeNode? _selectedTreeNode;
+    private SourceFileInfo? _selectedFileDetail;
+    private bool _isLoading = false;
+    private ViewMode _viewMode = ViewMode.Tree;
+    private Dictionary<string, FileTreeNode> _fileTree = [];
+    private HashSet<string> _expandedNodes = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnChange += OnAppStateChanged;
+        await LoadProjectsAsync();
+    }
+
+    private async void OnAppStateChanged()
+    {
+        await LoadProjectsAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadProjectsAsync()
+    {
+        if (!AppState.HasSolution)
+        {
+            _projects = [];
+            _selectedProject = null;
+            _selectedFile = null;
+            _selectedFiles.Clear();
+            return;
+        }
+
+        _isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            _projects = [];
+            foreach (var project in AppState.CurrentSolution!.Projects)
+            {
+                var enriched = await ProjectAnalyzer.EnrichProjectAsync(project);
+                _projects.Add(enriched);
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void SelectProject(ProjectInfo project)
+    {
+        _selectedProject = project;
+        _selectedFile = null;
+        _fileTree = BuildFileTree(project.SourceFiles);
+    }
+
+    private void SelectFile(SourceFileInfo file)
+    {
+        _selectedFile = file;
+    }
+
+    private void ToggleFileSelection(SourceFileInfo file, bool selected)
+    {
+        if (selected)
+        {
+            _selectedFiles.Add(file);
+        }
+        else
+        {
+            _selectedFiles.Remove(file);
+        }
+    }
+
+    private void ClearSelection()
+    {
+        _selectedFiles.Clear();
+    }
+
+    private void AddToMigrationPlan()
+    {
+        // Store selected files in AppState for Planner to pick up
+        AppState.PendingMigrationFiles = _selectedFiles.ToList();
+        _selectedFiles.Clear();
+        Navigation.NavigateTo("/planner");
+    }
+
+    private string GetRelativePath(string fullPath)
+    {
+        if (_selectedProject == null) return fullPath;
+        
+        var projectDir = Path.GetDirectoryName(_selectedProject.Path) ?? "";
+        if (fullPath.StartsWith(projectDir))
+        {
+            return fullPath.Substring(projectDir.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
+        return fullPath;
+    }
+
+    // Tree building
+    private Dictionary<string, FileTreeNode> BuildFileTree(IEnumerable<SourceFileInfo> files)
+    {
+        var root = new Dictionary<string, FileTreeNode>();
+        var projectDir = _selectedProject != null ? Path.GetDirectoryName(_selectedProject.Path) ?? "" : "";
+
+        foreach (var file in files)
+        {
+            var relativePath = GetRelativePath(file.Path);
+            var parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            
+            var current = root;
+            var pathSoFar = "";
+            
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var part = parts[i];
+                pathSoFar = string.IsNullOrEmpty(pathSoFar) ? part : $"{pathSoFar}/{part}";
+                
+                if (i == parts.Length - 1)
+                {
+                    // It's a file
+                    current[part] = new FileTreeNode
+                    {
+                        Name = part,
+                        Path = pathSoFar,
+                        IsFile = true,
+                        File = file
+                    };
+                }
+                else
+                {
+                    // It's a directory
+                    if (!current.ContainsKey(part))
+                    {
+                        current[part] = new FileTreeNode
+                        {
+                            Name = part,
+                            Path = pathSoFar,
+                            IsFile = false,
+                            Children = []
+                        };
+                    }
+                    current = current[part].Children!;
+                }
+            }
+        }
+
+        return root;
+    }
+
+    private RenderFragment RenderFileTree(Dictionary<string, FileTreeNode> nodes) => builder =>
+    {
+        var sortedNodes = nodes.Values
+            .OrderBy(n => n.IsFile)
+            .ThenBy(n => n.Name);
+            
+        foreach (var node in sortedNodes)
+        {
+            builder.OpenElement(0, "div");
+            builder.AddAttribute(1, "class", "tree-node");
+            
+            if (node.IsFile)
+            {
+                builder.OpenElement(2, "div");
+                builder.AddAttribute(3, "class", $"tree-item file-item {(_selectedFile == node.File ? "selected" : "")} {(_selectedFiles.Contains(node.File!) ? "checked" : "")}");
+                builder.AddAttribute(4, "onclick", EventCallback.Factory.Create(this, () => SelectFile(node.File!)));
+                
+                builder.OpenElement(5, "input");
+                builder.AddAttribute(6, "type", "checkbox");
+                builder.AddAttribute(7, "checked", _selectedFiles.Contains(node.File!));
+                builder.AddAttribute(8, "onclick", EventCallback.Factory.Create<Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, e => { }));
+                builder.AddAttribute(9, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => ToggleFileSelection(node.File!, (bool?)e.Value ?? false)));
+                builder.AddEventStopPropagationAttribute(10, "onclick", true);
+                builder.CloseElement();
+                
+                builder.OpenElement(11, "span");
+                builder.AddAttribute(12, "class", "tree-icon");
+                builder.AddContent(13, "📄");
+                builder.CloseElement();
+                
+                builder.OpenElement(14, "span");
+                builder.AddAttribute(15, "class", "tree-name");
+                builder.AddContent(16, node.Name);
+                builder.CloseElement();
+                
+                builder.CloseElement();
+            }
+            else
+            {
+                var isExpanded = _expandedNodes.Contains(node.Path);
+                
+                builder.OpenElement(17, "div");
+                builder.AddAttribute(18, "class", "tree-item folder-item");
+                builder.AddAttribute(19, "onclick", EventCallback.Factory.Create(this, () => ToggleNode(node.Path)));
+                
+                builder.OpenElement(20, "span");
+                builder.AddAttribute(21, "class", "tree-expand");
+                builder.AddContent(22, isExpanded ? "▼" : "▶");
+                builder.CloseElement();
+                
+                builder.OpenElement(23, "span");
+                builder.AddAttribute(24, "class", "tree-icon");
+                builder.AddContent(25, isExpanded ? "📂" : "📁");
+                builder.CloseElement();
+                
+                builder.OpenElement(26, "span");
+                builder.AddAttribute(27, "class", "tree-name");
+                builder.AddContent(28, node.Name);
+                builder.CloseElement();
+                
+                builder.CloseElement();
+                
+                if (isExpanded && node.Children != null)
+                {
+                    builder.OpenElement(29, "div");
+                    builder.AddAttribute(30, "class", "tree-children");
+                    builder.AddContent(31, RenderFileTree(node.Children));
+                    builder.CloseElement();
+                }
+            }
+            
+            builder.CloseElement();
+        }
+    };
+
+    private void ToggleNode(string path)
+    {
+        if (_expandedNodes.Contains(path))
+        {
+            _expandedNodes.Remove(path);
+        }
+        else
+        {
+            _expandedNodes.Add(path);
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnAppStateChanged;
+    }
+
+    private static string GetTypeIcon(TypeKind kind) => kind switch
+    {
+        TypeKind.Interface => "🔷",
+        TypeKind.Enum => "📊",
+        TypeKind.Struct => "🔲",
+        TypeKind.Record => "📋",
+        TypeKind.RecordStruct => "📋",
+        TypeKind.Delegate => "🔗",
+        _ => "📦"
+    };
+
+    // Group projects by their folder path
+    private IEnumerable<KeyValuePair<string, IEnumerable<ProjectInfo>>> GetProjectGroups()
+    {
+        if (!_projects.Any()) return [];
+
+        // Get the common base path (solution directory)
+        var solutionDir = Path.GetDirectoryName(AppState.CurrentSolution?.Path ?? "") ?? "";
+        
+        var groups = _projects
+            .GroupBy(p =>
+            {
+                var projectDir = Path.GetDirectoryName(p.Path) ?? "";
+                
+                // Get relative path from solution directory
+                if (projectDir.StartsWith(solutionDir))
+                {
+                    var relativePath = projectDir.Substring(solutionDir.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    
+                    // Get the first folder level (e.g., "src", "tests", "tools")
+                    var firstFolder = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).FirstOrDefault();
+                    
+                    if (!string.IsNullOrEmpty(firstFolder))
+                    {
+                        return firstFolder;
+                    }
+                }
+                
+                return "(root)";
+            })
+            .OrderBy(g => g.Key == "(root)" ? "zzz" : g.Key) // Put root at the end
+            .ThenBy(g => g.Key);
+
+        return groups.Select(g => new KeyValuePair<string, IEnumerable<ProjectInfo>>(
+            g.Key, 
+            g.OrderBy(p => p.Name)
+        ));
+    }
+
+    // Tests grouping helpers
+    private int GetTestClassCount()
+    {
+        if (_selectedProject == null) return 0;
+        return _selectedProject.SourceFiles
+            .SelectMany(f => f.Classes)
+            .Count(c => c.Tests.Any());
+    }
+
+    private IEnumerable<(string ClassName, IEnumerable<TestInfo> Tests)> GetTestsByClass()
+    {
+        if (_selectedProject == null) return [];
+        
+        return _selectedProject.SourceFiles
+            .SelectMany(f => f.Classes.Where(c => c.Tests.Any())
+                .Select(c => (ClassName: c.Name, Tests: c.Tests.AsEnumerable())))
+            .OrderBy(x => x.ClassName);
+    }
+
+    private IEnumerable<(TestInfo Test, string ClassName, string FileName)> GetAllTestsFlat()
+    {
+        if (_selectedProject == null) return [];
+        
+        return _selectedProject.SourceFiles
+            .SelectMany(f => f.Classes
+                .SelectMany(c => c.Tests
+                    .Select(t => (Test: t, ClassName: c.Name, FileName: f.Name))))
+            .OrderBy(x => x.ClassName)
+            .ThenBy(x => x.Test.Name);
+    }
+
+    private class FileTreeNode
+    {
+        public string Name { get; set; } = "";
+        public string Path { get; set; } = "";
+        public bool IsFile { get; set; }
+        public bool IsDirectory => !IsFile;
+        public SourceFileInfo? File { get; set; }
+        public Dictionary<string, FileTreeNode>? Children { get; set; }
+    }
+    
+    private IEnumerable<FileTreeNode> GetFileTreeRootNodes()
+    {
+        return _fileTree?.Values ?? Enumerable.Empty<FileTreeNode>();
+    }
+    
+    private string GetTreeNodeIcon(FileTreeNode node)
+    {
+        return node.IsDirectory ? "📁" : "📄";
+    }
+    
+    private async Task OnFileTreeNodeSelected(FileTreeNode node)
+    {
+        _selectedTreeNode = node;
+        
+        // If it's a file node with associated SourceFileInfo, show its details
+        if (node.IsFile && node.File != null)
+        {
+            _selectedFileDetail = node.File;
+        }
+        else
+        {
+            _selectedFileDetail = null;
+        }
+        
+        await Task.CompletedTask;
+    }
+}
