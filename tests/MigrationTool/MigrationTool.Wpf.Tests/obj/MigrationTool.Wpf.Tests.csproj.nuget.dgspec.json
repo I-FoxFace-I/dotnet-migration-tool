@@ -1,0 +1,1659 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Wpf.Tests\\MigrationTool.Wpf.Tests.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj",
+        "projectName": "Wpf.Abstractions",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj",
+        "projectName": "Wpf.Contracts",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj",
+        "projectName": "Wpf.Scopes",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\Wpf.Services.MicrosoftDI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\Wpf.Services.MicrosoftDI.csproj",
+        "projectName": "Wpf.Services.MicrosoftDI",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\Wpf.Services.MicrosoftDI.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Scopes\\Wpf.Scopes.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\Wpf.Services.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\Wpf.Services.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\Wpf.Services.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\Wpf.Services.csproj",
+        "projectName": "Wpf.Services",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\Wpf.Services.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "Autofac": {
+              "target": "Package",
+              "version": "[8.4.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj",
+        "projectName": "Wpf.ViewModels",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Abstractions\\Wpf.Abstractions.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.4.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj",
+        "projectName": "Wpf.Views",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\Wpf.Views.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Views\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Contracts\\Wpf.Contracts.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "Autofac": "8.4.0",
+            "Autofac.Extensions.DependencyInjection": "10.0.0",
+            "BenchmarkDotNet": "0.14.0",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.4",
+            "FluentAssertions": "8.8.0",
+            "MahApps.Metro.IconPacks.Material": "6.1.0",
+            "Microsoft.CodeAnalysis": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.Data.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Design": "9.0.10",
+            "Microsoft.EntityFrameworkCore.InMemory": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Relational": "9.0.10",
+            "Microsoft.EntityFrameworkCore.Sqlite": "9.0.10",
+            "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
+            "Microsoft.Extensions.Configuration": "9.0.10",
+            "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": "9.0.10",
+            "Microsoft.Extensions.Configuration.Json": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Console": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.10",
+            "Microsoft.Extensions.Logging.EventSource": "9.0.10",
+            "Microsoft.Extensions.Logging.TraceSource": "9.0.10",
+            "Microsoft.Extensions.Options": "9.0.10",
+            "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10",
+            "Microsoft.NET.Test.Sdk": "18.0.0",
+            "Microsoft.Testing.Extensions.CodeCoverage": "18.1.0",
+            "Moq": "4.20.72",
+            "NJsonSchema": "11.1.0",
+            "OxyPlot.Core": "2.2.0",
+            "OxyPlot.Wpf": "2.2.0",
+            "OxyPlot.Wpf.Shared": "2.2.0",
+            "Serilog": "4.2.0",
+            "Serilog.Extensions.Logging": "9.0.0",
+            "Serilog.Extensions.Logging.File": "3.0.0",
+            "Serilog.Settings.Configuration": "9.0.0",
+            "Serilog.Sinks.Console": "6.0.0",
+            "Serilog.Sinks.Debug": "3.0.0",
+            "Serilog.Sinks.File": "6.0.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Reactive": "6.0.1",
+            "System.Text.Json": "9.0.10",
+            "xunit": "2.9.3",
+            "xunit.runner.visualstudio": "3.1.5"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
+        "projectName": "MigrationTool.Core.Abstractions",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\NuGet.Config",
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\nuget-local": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "centralPackageVersions": {
+            "AathifMahir.Maui.MauiIcons.Material": "4.0.0",
+            "Appium.WebDriver": "5.0.0",
+            "bunit": "1.31.3",
+            "CommunityToolkit.Maui": "9.1.1",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.2",
+            "FluentAssertions": "7.0.0",
+            "Microsoft.AspNetCore.Components.Web": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Localization": "9.0.0",
+            "Microsoft.Extensions.Localization.Abstractions": "9.0.0",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.0",
+            "Microsoft.Maui.Controls": "9.0.0",
+            "Microsoft.NET.Test.Sdk": "17.12.0",
+            "Moq": "4.20.72",
+            "MudBlazor": "7.14.0",
+            "Wpf.Framework": "1.0.0-local",
+            "Wpf.Services.MicrosoftDI": "1.0.0",
+            "xunit": "2.9.2",
+            "xunit.runner.visualstudio": "2.8.2"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj",
+        "projectName": "MigrationTool.Core",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\NuGet.Config",
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\nuget-local": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.CodeAnalysis.CSharp": {
+              "target": "Package",
+              "version": "[4.12.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": {
+              "target": "Package",
+              "version": "[4.12.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "AathifMahir.Maui.MauiIcons.Material": "4.0.0",
+            "Appium.WebDriver": "5.0.0",
+            "bunit": "1.31.3",
+            "CommunityToolkit.Maui": "9.1.1",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.2",
+            "FluentAssertions": "7.0.0",
+            "Microsoft.AspNetCore.Components.Web": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Localization": "9.0.0",
+            "Microsoft.Extensions.Localization.Abstractions": "9.0.0",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.0",
+            "Microsoft.Maui.Controls": "9.0.0",
+            "Microsoft.NET.Test.Sdk": "17.12.0",
+            "Moq": "4.20.72",
+            "MudBlazor": "7.14.0",
+            "Wpf.Framework": "1.0.0-local",
+            "Wpf.Services.MicrosoftDI": "1.0.0",
+            "xunit": "2.9.2",
+            "xunit.runner.visualstudio": "2.8.2"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj",
+        "projectName": "MigrationTool.Localization",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\NuGet.Config",
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\nuget-local": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.Extensions.Localization.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.0, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "AathifMahir.Maui.MauiIcons.Material": "4.0.0",
+            "Appium.WebDriver": "5.0.0",
+            "bunit": "1.31.3",
+            "CommunityToolkit.Maui": "9.1.1",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.2",
+            "FluentAssertions": "7.0.0",
+            "Microsoft.AspNetCore.Components.Web": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Localization": "9.0.0",
+            "Microsoft.Extensions.Localization.Abstractions": "9.0.0",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.0",
+            "Microsoft.Maui.Controls": "9.0.0",
+            "Microsoft.NET.Test.Sdk": "17.12.0",
+            "Moq": "4.20.72",
+            "MudBlazor": "7.14.0",
+            "Wpf.Framework": "1.0.0-local",
+            "Wpf.Services.MicrosoftDI": "1.0.0",
+            "xunit": "2.9.2",
+            "xunit.runner.visualstudio": "2.8.2"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\MigrationTool.Wpf.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\MigrationTool.Wpf.csproj",
+        "projectName": "MigrationTool.Wpf",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\MigrationTool.Wpf.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\NuGet.Config",
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\nuget-local": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\Wpf.Services.MicrosoftDI.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.Services.MicrosoftDI\\Wpf.Services.MicrosoftDI.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\src\\Wpf\\Wpf.ViewModels\\Wpf.ViewModels.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.4.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Debug": {
+              "target": "Package",
+              "version": "[9.0.0, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "AathifMahir.Maui.MauiIcons.Material": "4.0.0",
+            "Appium.WebDriver": "5.0.0",
+            "bunit": "1.31.3",
+            "CommunityToolkit.Maui": "9.1.1",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.2",
+            "FluentAssertions": "7.0.0",
+            "Microsoft.AspNetCore.Components.Web": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Localization": "9.0.0",
+            "Microsoft.Extensions.Localization.Abstractions": "9.0.0",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.0",
+            "Microsoft.Maui.Controls": "9.0.0",
+            "Microsoft.NET.Test.Sdk": "17.12.0",
+            "Moq": "4.20.72",
+            "MudBlazor": "7.14.0",
+            "Wpf.Framework": "1.0.0-local",
+            "Wpf.Services.MicrosoftDI": "1.0.0",
+            "xunit": "2.9.2",
+            "xunit.runner.visualstudio": "2.8.2"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Wpf.Tests\\MigrationTool.Wpf.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Wpf.Tests\\MigrationTool.Wpf.Tests.csproj",
+        "projectName": "MigrationTool.Wpf.Tests",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Wpf.Tests\\MigrationTool.Wpf.Tests.csproj",
+        "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Wpf.Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Telerik UI for WPF.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Users\\mrmar\\.nuget\\packages\\local": {},
+          "C:\\Users\\mrmar\\source\\repos\\calibrator\\nuget.config": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0-windows7.0": {
+            "targetAlias": "net9.0-windows",
+            "projectReferences": {
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core\\MigrationTool.Core.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Localization\\MigrationTool.Localization.csproj"
+              },
+              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\MigrationTool.Wpf.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Wpf\\MigrationTool.Wpf.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net9.0-windows7.0": {
+          "targetAlias": "net9.0-windows",
+          "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.4.0, )",
+              "versionCentrallyManaged": true
+            },
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[7.0.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.10, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.12.0, )",
+              "versionCentrallyManaged": true
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.72, )",
+              "versionCentrallyManaged": true
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.2, )",
+              "versionCentrallyManaged": true
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.2, )",
+              "versionCentrallyManaged": true
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.8.2, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "AathifMahir.Maui.MauiIcons.Material": "4.0.0",
+            "Appium.WebDriver": "5.0.0",
+            "bunit": "1.31.3",
+            "CommunityToolkit.Maui": "9.1.1",
+            "CommunityToolkit.Mvvm": "8.4.0",
+            "coverlet.collector": "6.0.2",
+            "FluentAssertions": "7.0.0",
+            "Microsoft.AspNetCore.Components.Web": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
+            "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
+            "Microsoft.Extensions.DependencyInjection": "9.0.10",
+            "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Localization": "9.0.0",
+            "Microsoft.Extensions.Localization.Abstractions": "9.0.0",
+            "Microsoft.Extensions.Logging": "9.0.10",
+            "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+            "Microsoft.Extensions.Logging.Debug": "9.0.0",
+            "Microsoft.Maui.Controls": "9.0.0",
+            "Microsoft.NET.Test.Sdk": "17.12.0",
+            "Moq": "4.20.72",
+            "MudBlazor": "7.14.0",
+            "Wpf.Framework": "1.0.0-local",
+            "Wpf.Services.MicrosoftDI": "1.0.0",
+            "xunit": "2.9.2",
+            "xunit.runner.visualstudio": "2.8.2"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

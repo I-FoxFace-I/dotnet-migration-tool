@@ -1,0 +1,1073 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Wpf.Scopes</name>
+    </assembly>
+    <members>
+        <member name="T:Wpf.Scopes.Abstract.IRootTaggedProvider">
+            <summary>
+            Root-level tagged service provider (Singleton).
+            Provides access to the service registry and root scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.IRootTaggedProvider.Registry">
+            <summary>
+            Gets the tagged service registry.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.IRootTaggedProvider.CreateRootScope(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a new root-level tagged scope.
+            </summary>
+            <param name="tag">The scope tag.</param>
+            <returns>A new tagged scope.</returns>
+        </member>
+        <member name="T:Wpf.Scopes.Abstract.IScopedTaggedProvider">
+            <summary>
+            Scope-level tagged service provider (per tagged scope).
+            Provides access to the current scope's tagged service provider.
+            
+            This interface is automatically available in every tagged scope
+            and should be used by services that need to resolve other services
+            with proper tagged scope context (e.g., ContentManager).
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.IScopedTaggedProvider.Provider">
+            <summary>
+            Gets the underlying tagged service provider for this scope.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.IScopedTaggedProvider.Store">
+            <summary>
+            Gets the scope store (instance cache) for this scope hierarchy.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.IScopedTaggedProvider.CurrentTag">
+            <summary>
+            Gets the current scope tag.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Abstract.IScopeStore">
+            <summary>
+            Holds tagged providers and cached instances for a scope hierarchy.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.IScopeStore.GetOrCreate(System.Type,System.Type,Wpf.Scopes.Data.ScopeTag,System.Func{System.IServiceProvider,System.Object})">
+            <summary>Gets or creates a tagged service instance.</summary>
+            <param name="precompiledFactory">Optional pre-compiled factory delegate. If provided, used instead of runtime compilation.</param>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.IScopeStore.GetOrCreateWithFactory(System.Type,Wpf.Scopes.Data.ScopeTag,System.Func{System.Object})">
+            <summary>
+            Gets or creates a tagged service instance using a factory delegate.
+            The factory is invoked only if the instance doesn't already exist for the owner tag.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.IScopeStore.HasTag(Wpf.Scopes.Data.ScopeTag)">
+            <summary>Checks if tag exists in hierarchy.</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.IScopeStore.GetProviderForTag(Wpf.Scopes.Data.ScopeTag)">
+            <summary>Gets the service provider for a specific tag.</summary>
+        </member>
+        <member name="T:Wpf.Scopes.Abstract.ITaggedScope">
+            <summary>
+            User-facing interface for tagged scopes.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.ITaggedScope.ServiceProvider">
+            <summary>
+            Gets the tagged service provider for this scope.
+            Shadows IServiceScope.ServiceProvider to return ITaggedServiceProvider.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Abstract.ITaggedServiceProvider">
+            <summary>
+            Extended service provider interface for tagged scopes.
+            Provides access to ScopeStore and child scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.ITaggedServiceProvider.ScopeStore">
+            <summary>
+            Gets the scope store for this provider.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.ITaggedServiceProvider.Tag">
+            <summary>
+            Gets the tag for this scope.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Abstract.ITaggedServiceProvider.IsDisposed">
+            <summary>
+            Gets whether this provider is disposed.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.ITaggedServiceProvider.CreateChildProvider(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a child scope with the given tag.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.ITaggedServiceProvider.GetRequiredService(System.Type)">
+            <summary>
+            Gets a required service of the specified type.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Abstract.ITaggedServiceRegistry">
+            <summary>
+            Singleton registry - maps service types to their owner scope tags.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.ITaggedServiceRegistry.RegisterWithFactory``1(Wpf.Scopes.Data.ScopeTag,System.Func{System.IServiceProvider,``0})">
+            <summary>
+            Registers a service with a custom factory delegate.
+            Useful for DbContext integration where instances come from IDbContextFactory.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.ITaggedServiceRegistry.GetFactory(System.Type)">
+            <summary>
+            Gets the pre-compiled factory delegate for a service type.
+            Returns null if the service is not registered or factory compilation failed.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Abstract.ITaggedServiceRegistry.GetCachedServiceInfo(System.Type)">
+            <summary>
+            Gets cached service info (tag, implementation type, factory) in a single call.
+            This is more efficient than calling GetOwnerTag, GetImplementationType, and GetFactory separately.
+            Cache is shared across all providers using the same registry (singleton pattern).
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Configuration.TaggedScopeRuntime">
+            <summary>
+            Runtime configuration for Tagged Scopes.
+            Allows switching between implementations without recompilation.
+            </summary>
+            <remarks>
+            For best performance in production, use compile-time configuration via:
+            <code>dotnet build -p:TaggedScopeVersion=V3</code>
+            
+            Runtime configuration is useful for:
+            - Testing different implementations
+            - A/B testing
+            - Debugging
+            </remarks>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopeRuntime.OverrideVersion">
+            <summary>
+            Gets or sets the runtime override for Tagged Scope version.
+            When set, this overrides the compile-time configuration.
+            Set to null to use compile-time default.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopeRuntime.CompileTimeVersion">
+            <summary>
+            Gets the compile-time configured version.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopeRuntime.EffectiveVersion">
+            <summary>
+            Gets the effective version (runtime override or compile-time default).
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopeRuntime.EffectiveVersionName">
+            <summary>
+            Gets the name of the effective version.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Configuration.TaggedScopeRuntime.CreateScope(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a tagged scope using the effective version (runtime or compile-time).
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Configuration.TaggedScopeRuntime.CreateChildScope(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a child scope using the effective version (runtime or compile-time).
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Configuration.TaggedScopeRuntime.UseVersion(Wpf.Scopes.Configuration.TaggedScopesVersion)">
+            <summary>
+            Temporarily uses a specific version for the duration of the returned scope.
+            </summary>
+            <example>
+            using (TaggedScopeRuntime.UseVersion(TaggedScopesVersion.V3))
+            {
+                // All CreateScope calls will use V3
+            }
+            </example>
+        </member>
+        <member name="T:Wpf.Scopes.Configuration.RuntimeServiceProviderExtensions">
+            <summary>
+            Extension methods that use runtime-configurable Tagged Scope version.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Configuration.RuntimeServiceProviderExtensions.CreateRuntimeScope(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a tagged scope using the runtime-configured version.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Configuration.RuntimeServiceProviderExtensions.CreateRuntimeChildScope(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a child scope using the runtime-configured version.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Configuration.TaggedScopesOptions">
+            <summary>
+            Configuration options for Tagged Scopes.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopesOptions.Version">
+            <summary>
+            Gets or sets the implementation version to use.
+            Default is <see cref="F:Wpf.Scopes.Configuration.TaggedScopesVersion.Original"/>.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopesOptions.EnableDebugLogging">
+            <summary>
+            Gets or sets whether to enable debug logging for scope operations.
+            Default is false.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Configuration.TaggedScopesOptions.ValidateScopeHierarchy">
+            <summary>
+            Gets or sets whether to validate scope hierarchy on service resolution.
+            When enabled, additional checks are performed to ensure services are resolved from correct scopes.
+            Default is false (for performance).
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Configuration.TaggedScopesVersion">
+            <summary>
+            Specifies which implementation version of Tagged Scopes to use.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Configuration.TaggedScopesVersion.Original">
+            <summary>
+            Original implementation - stable, well-tested baseline.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Configuration.TaggedScopesVersion.V2">
+            <summary>
+            V2 - Optimized with cached registry lookups and pre-compiled factory delegates.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Configuration.TaggedScopesVersion.V3">
+            <summary>
+            V3 - Highly optimized with struct-based cache entries and aggressive inlining.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Configuration.TaggedScopesVersion.V4">
+            <summary>
+            V4 - Flyweight pattern optimization for reduced memory allocation.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Data.ScopeTag">
+            <summary>
+            Strongly-typed scope tag for session identification and Autofac scope matching
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Data.ScopeTag.Category">
+            <summary>
+            Category of the scope
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Data.ScopeTag.Name">
+            <summary>
+            Optional name for the scope (e.g., "customer-workflow", "app-context")
+            For Custom category, this is required and represents the custom category name
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.#ctor(Wpf.Scopes.Enums.ScopeCategory,System.String)">
+            <summary>
+            Creates a new scope tag
+            </summary>
+            <param name="category">Scope category</param>
+            <param name="name">Optional scope name (required for Custom category)</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Root">
+            <summary>
+            Creates a root application scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Window">
+            <summary>
+            Creates a window scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Window(System.String)">
+            <summary>
+            Creates a window scope tag with a specific name
+            </summary>
+            <param name="windowName">Window name</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Dialog">
+            <summary>
+            Creates a dialog scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Dialog(System.String)">
+            <summary>
+            Creates a dialog scope tag with a specific name
+            </summary>
+            <param name="dialogName">Dialog name</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Region">
+            <summary>
+            Creates a region scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Region(System.String)">
+            <summary>
+            Creates a region scope tag with a specific name
+            </summary>
+            <param name="regionName">Region name</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Database(System.String)">
+            <summary>
+            Creates a database scope tag
+            </summary>
+            <param name="contextName">Optional database context name</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Workflow(System.String)">
+            <summary>
+            Creates a workflow scope tag
+            </summary>
+            <param name="workflowName">Workflow name</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Request">
+            <summary>
+            Creates a request scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.Custom(System.String)">
+            <summary>
+            Creates a custom scope tag
+            </summary>
+            <param name="customName">Custom category name (required)</param>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.ToString">
+            <summary>
+            Converts to full string representation
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.ToAutofacTag">
+            <summary>
+            Converts to Autofac tag for InstancePerMatchingLifetimeScope
+            </summary>
+            <remarks>
+            For database and workflow scopes, we want to share services across instances
+            with the same category+name. For window and request scopes, each gets unique scope.
+            </remarks>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTag.ToShortString">
+            <summary>
+            Short string representation (category:name or just category)
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Data.ScopeTagV2">
+            <summary>
+            Strongly-typed scope tag with hierarchical category support.
+            
+            Key features:
+            - Implicit fallback rules based on ScopeCategoryV2 flags
+            - Parent scopes can satisfy child scope service requests
+            - No changes needed in service registration
+            
+            Hierarchy examples:
+            - Window scope can provide services registered for Region
+            - Transaction scope can provide services registered for Database
+            - Worker scope can provide services registered for Request
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Data.ScopeTagV2.Category">
+            <summary>
+            Category of the scope (using V2 flags-based categories)
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Data.ScopeTagV2.Name">
+            <summary>
+            Optional name for the scope (e.g., "customer-workflow", "main-window")
+            For Custom category, this is required.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.#ctor(Wpf.Scopes.Enums.ScopeCategoryV2,System.String)">
+            <summary>
+            Creates a new scope tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Root">
+            <summary>Creates a root application scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Window(System.String)">
+            <summary>Creates a window scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Dialog(System.String)">
+            <summary>Creates a dialog scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Region(System.String)">
+            <summary>Creates a region scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Database(System.String)">
+            <summary>Creates a database scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Transaction(System.String)">
+            <summary>Creates a transaction scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Cache(System.String)">
+            <summary>Creates a cache scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Worker(System.String)">
+            <summary>Creates a worker scope tag (for worker pool pattern)</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Workflow(System.String)">
+            <summary>Creates a workflow scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Batch(System.String)">
+            <summary>Creates a batch scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Pipeline(System.String)">
+            <summary>Creates a pipeline scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Request(System.String)">
+            <summary>Creates a request scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Operation(System.String)">
+            <summary>Creates an operation scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Session(System.String)">
+            <summary>Creates a session scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Tenant(System.String)">
+            <summary>Creates a tenant scope tag (for multi-tenant apps)</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.Custom(System.String)">
+            <summary>Creates a custom scope tag</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.CanSatisfy(Wpf.Scopes.Data.ScopeTagV2)">
+            <summary>
+            Checks if this scope tag can satisfy a request for services registered with the given owner tag.
+            Uses hierarchical rules defined in ScopeCategoryV2 flags.
+            </summary>
+            <param name="requestedTag">The tag that the service was registered with</param>
+            <returns>True if this scope can provide services for the requested tag</returns>
+            <example>
+            // Window can satisfy Region (parent → child)
+            ScopeTagV2.Window().CanSatisfy(ScopeTagV2.Region()) == true
+            
+            // Transaction can satisfy Database
+            ScopeTagV2.Transaction().CanSatisfy(ScopeTagV2.Database()) == true
+            
+            // Region cannot satisfy Window (child → parent is NOT allowed)
+            ScopeTagV2.Region().CanSatisfy(ScopeTagV2.Window()) == false
+            </example>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.GetFallbackCategories(Wpf.Scopes.Enums.ScopeCategoryV2)">
+            <summary>
+            Gets the fallback categories for a given category.
+            These are the categories that can satisfy requests for the given category.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.CanCategorySatisfy(Wpf.Scopes.Enums.ScopeCategoryV2,Wpf.Scopes.Enums.ScopeCategoryV2)">
+            <summary>
+            Checks if the available category can satisfy a request for the requested category.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.IsCompositeCategory(Wpf.Scopes.Enums.ScopeCategoryV2)">
+            <summary>
+            Checks if a category is a composite (multiple flags set).
+            Composite categories should not be used directly in ScopeTagV2.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.ToString">
+            <summary>
+            Converts to full string representation
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.ToAutofacTag">
+            <summary>
+            Converts to Autofac tag for InstancePerMatchingLifetimeScope
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Data.ScopeTagV2.ToShortString">
+            <summary>
+            Short string representation
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Enums.ScopeCategory">
+            <summary>
+            Defines scope categories for type-safe scope management
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.None">
+            <summary>
+            No scope category
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Root">
+            <summary>
+            Root application scope
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Window">
+            <summary>
+            Window scope - each window has its own
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Dialog">
+            <summary>
+            Dialog scope - for modal dialogs within a window
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Region">
+            <summary>
+            Region scope - for content regions within windows or dialogs
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Database">
+            <summary>
+            Database scope - for database operations and DbContext management
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Workflow">
+            <summary>
+            Workflow session scope - shared across workflow steps
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Request">
+            <summary>
+            Request scope - for request-scoped operations
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategory.Custom">
+            <summary>
+            Custom scope - user-defined category
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Enums.ScopeCategoryV2">
+            <summary>
+            Defines scope categories with hierarchical relationships using flags.
+            
+            The flags enable implicit fallback behavior:
+            - Services registered for Region can be resolved from Window/Dialog scopes
+            - Services registered for Database can be resolved from Transaction scopes
+            - Services registered for Request can be resolved from Worker/Workflow scopes
+            
+            Hierarchy rules (parent can satisfy child):
+            - UIContainer (Window|Dialog) → can satisfy → Region
+            - Transaction → can satisfy → Database  
+            - ProcessingScope (Worker|Workflow) → can satisfy → Request
+            - Worker → can satisfy → Batch
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.None">
+            <summary>
+            No scope category.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Root">
+            <summary>
+            Root application scope - singleton for entire application lifetime.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Window">
+            <summary>
+            Window scope - main application windows
+            Can satisfy: Region, Dialog (as container)
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Dialog">
+            <summary>
+            Dialog scope - modal/modeless dialogs
+            Can satisfy: Region (as container)
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Region">
+            <summary>
+            Region scope - content regions within windows/dialogs
+            Fallback: Window, Dialog.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Database">
+            <summary>
+            Database scope - DbContext and connection management
+            Fallback: Transaction.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Transaction">
+            <summary>
+            Transaction scope - unit of work pattern
+            Can satisfy: Database.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Cache">
+            <summary>
+            Cache scope - cached data sharing.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Worker">
+            <summary>
+            Worker scope - worker pool pattern (connection pool, thread pool)
+            Can satisfy: Request, Batch.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Workflow">
+            <summary>
+            Workflow scope - business workflow/process
+            Can satisfy: Request.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Batch">
+            <summary>
+            Batch scope - batch processing jobs
+            Fallback: Worker.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Pipeline">
+            <summary>
+            Pipeline scope - processing pipelines (ETL, etc.)
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Request">
+            <summary>
+            Request scope - short-lived request processing
+            Fallback: Worker, Workflow.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Operation">
+            <summary>
+            Operation scope - single operation within request
+            Fallback: Request.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Session">
+            <summary>
+            Session scope - user session.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Tenant">
+            <summary>
+            Tenant scope - multi-tenant isolation.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.Custom">
+            <summary>
+            Custom scope - user-defined category (no hierarchical rules)
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.UIContainer">
+            <summary>
+            UI Container: Window OR Dialog - both can host Region content.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.UIScope">
+            <summary>
+            Any UI scope.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.DataScope">
+            <summary>
+            Data Scope: Database OR Transaction.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.ProcessingScope">
+            <summary>
+            Processing Scope: Worker OR Workflow - can satisfy Request.
+            </summary>
+        </member>
+        <member name="F:Wpf.Scopes.Enums.ScopeCategoryV2.BatchScope">
+            <summary>
+            Batch Processing Scope: Batch OR Worker.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV2.CreateScopeV2(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a new tagged scope using optimized implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV2.CreateChildScopeV2(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a child scope from an existing tagged scope using optimized implementation.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV3">
+            <summary>
+            Extension methods for creating V3 optimized tagged scopes
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV3.CreateScopeV3(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a new tagged scope using highly optimized V3 implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV3.CreateChildScopeV3(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a child scope from an existing tagged scope using V3 optimized implementation.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV4">
+            <summary>
+            Extension methods for creating V4 optimized tagged scopes with Flyweight pattern
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV4.CreateScopeV4(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a new tagged scope using V4 Flyweight pattern implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Optimized.ServiceProviderExtensionsV4.CreateChildScopeV4(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>
+            Creates a child scope from an existing tagged scope using V4 Flyweight pattern implementation.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Extensions.ScopeTagExtensions">
+            <summary>
+            Extension methods for ScopeTag
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ScopeTagExtensions.IsDatabase(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Checks if scope tag is a database scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ScopeTagExtensions.IsWorkflow(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Checks if scope tag is a workflow scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ScopeTagExtensions.IsWindow(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Checks if scope tag is a window scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ScopeTagExtensions.IsRequest(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Checks if scope tag is a request scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ScopeTagExtensions.IsCustom(Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Checks if scope tag is a custom scope.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Extensions.ScopeStoreContext">
+            <summary>
+            ThreadLocal storage for passing IScopeStore to factory delegates.
+            When TaggedServiceProvider resolves a service, it sets the current IScopeStore here
+            so factory delegates can access it even when sp is standard Microsoft DI provider.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Extensions.ScopeStoreContext.Current">
+            <summary>Gets or sets the current IScopeStore for this async context.</summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddTaggedScopes(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds tagged scope support to the service collection with default configuration (Original version).
+            Registers:
+            - ITaggedServiceRegistry (Singleton) - service registration metadata
+            - IRootTaggedProvider (Singleton) - root scope creation
+            - IScopedTaggedProvider (Scoped) - per-scope tagged provider access.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddTaggedScopes(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Wpf.Scopes.Configuration.TaggedScopesOptions})">
+            <summary>
+            Adds tagged scope support to the service collection with custom configuration.
+            Registers:
+            - ITaggedServiceRegistry (Singleton) - service registration metadata
+            - IRootTaggedProvider (Singleton) - root scope creation using specified version
+            - IScopedTaggedProvider (Scoped) - per-scope tagged provider access.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="configure">Configuration action for TaggedScopesOptions.</param>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.CreateRootTaggedProvider(System.IServiceProvider,Wpf.Scopes.Configuration.TaggedScopesVersion)">
+            <summary>
+            Creates the appropriate IRootTaggedProvider based on the selected version.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddScopedWithTag``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Registers a service that is scoped to a specific tag.
+            Instance is created when first resolved within a scope with that tag,
+            and shared with all child scopes.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddScopedWithTag``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Registers a service that is scoped to a specific tag (same type for service and implementation).
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddScopedWithTag``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Wpf.Scopes.Data.ScopeTag,System.Func{System.IServiceProvider,``0})">
+            <summary>
+            Registers a service that is scoped to a specific tag using a custom factory delegate.
+            Useful for DbContext integration where instances come from IDbContextFactory.
+            </summary>
+            <typeparam name="TService">The service type.</typeparam>
+            <param name="services">The service collection.</param>
+            <param name="ownerTag">The scope tag that owns this service instance.</param>
+            <param name="factory">Factory delegate to create the service instance.</param>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddDbContextWithTag``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Wpf.Scopes.Data.ScopeTag,System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
+            <summary>
+            Registers a DbContext with pooled factory that is scoped to a specific tag.
+            The DbContext instance is obtained from PooledDbContextFactory and managed by the tagged scope.
+            </summary>
+            <typeparam name="TDbContext">The DbContext type.</typeparam>
+            <param name="services">The service collection.</param>
+            <param name="ownerTag">The scope tag that owns this DbContext instance.</param>
+            <param name="configureOptions">Configuration action for DbContext options.</param>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceCollectionExtensions.AddDbContextWithTag``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Wpf.Scopes.Data.ScopeTag,Microsoft.EntityFrameworkCore.DbContextOptions{``0})">
+            <summary>
+            Registers a DbContext with pooled factory that is scoped to a specific tag.
+            Overload that accepts pre-configured DbContextOptions.
+            </summary>
+            <typeparam name="TDbContext">The DbContext type.</typeparam>
+            <param name="services">The service collection.</param>
+            <param name="ownerTag">The scope tag that owns this DbContext instance.</param>
+            <param name="options">Pre-configured DbContext options.</param>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceProviderExtensions.CreateScope(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a new tagged scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceProviderExtensions.CreateScope(Wpf.Scopes.Abstract.ITaggedServiceProvider,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a new tagged scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.ServiceProviderExtensions.CreateChildScope(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a child scope from an existing tagged scope.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions">
+            <summary>
+            Universal extension methods that use the compile-time configured Tagged Scope implementation.
+            The implementation is selected via the TaggedScopeVersion MSBuild property.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions.CurrentVersion">
+            <summary>
+            Gets the current Tagged Scope version being used (for diagnostics).
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions.CreateTaggedScope(System.IServiceProvider,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a new tagged scope using the configured implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions.CreateTaggedChildScope(Wpf.Scopes.Abstract.ITaggedScope,Wpf.Scopes.Data.ScopeTag)">
+            <summary>
+            Creates a child scope from an existing tagged scope using the configured implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions.CreateRootTaggedScope(System.IServiceProvider)">
+            <summary>
+            Creates a root tagged scope using the configured implementation.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Extensions.Universal.UniversalServiceProviderExtensions.CreateWindowTaggedScope(System.IServiceProvider)">
+            <summary>
+            Creates a window tagged scope using the configured implementation.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.ITaggedServiceProxy">
+            <summary>
+            Interface implemented by SharedServiceProxy to allow access to the underlying target.
+            Used by infrastructure code to access the real instance behind the proxy.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.ITaggedServiceProxy.GetTarget">
+            <summary>
+            Gets the underlying target instance.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.RootTaggedProviderV2">
+            <summary>
+            Root-level tagged service provider implementation V2 (Singleton).
+            Uses optimized TaggedServiceProviderV2 for scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.Optimized.RootTaggedProviderV2.Registry">
+            <inheritdoc />
+        </member>
+        <member name="M:Wpf.Scopes.Services.Optimized.RootTaggedProviderV2.CreateRootScope(Wpf.Scopes.Data.ScopeTag)">
+            <inheritdoc />
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.RootTaggedProviderV3">
+            <summary>
+            Root-level tagged service provider implementation V3 (Singleton).
+            Uses highly optimized TaggedServiceProviderV3 for scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.Optimized.RootTaggedProviderV3.Registry">
+            <inheritdoc />
+        </member>
+        <member name="M:Wpf.Scopes.Services.Optimized.RootTaggedProviderV3.CreateRootScope(Wpf.Scopes.Data.ScopeTag)">
+            <inheritdoc />
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.RootTaggedProviderV4">
+            <summary>
+            Root-level tagged service provider implementation V4 (Singleton).
+            Uses Flyweight pattern optimized TaggedServiceProviderV4 for scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.Optimized.RootTaggedProviderV4.Registry">
+            <inheritdoc />
+        </member>
+        <member name="M:Wpf.Scopes.Services.Optimized.RootTaggedProviderV4.CreateRootScope(Wpf.Scopes.Data.ScopeTag)">
+            <inheritdoc />
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.ScopeHierarchy">
+            <summary>
+            Immutable hierarchy structure shared across scopes (Flyweight pattern).
+            Stores only tags - stores are found via lazy traversal through parent chain.
+            Reduces allocations by sharing hierarchy data instead of copying.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeFactoryV2">
+            <summary>
+            Factory for creating child scopes in optimized version
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeFactoryV3">
+            <summary>
+            Factory for creating child scopes in V3 optimized version
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeFactoryV4">
+            <summary>
+            Factory for creating child scopes in V4 optimized version with Flyweight pattern
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeV2">
+            <summary>
+            Wrapper for optimized TaggedServiceProviderV2 implementing ITaggedScope
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeV3">
+            <summary>
+            Lightweight wrapper for TaggedServiceProviderV3 implementing ITaggedScope
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedScopeV4">
+            <summary>
+            Lightweight wrapper for TaggedServiceProviderV4 implementing ITaggedScope
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedServiceProviderV2">
+            <summary>
+            Optimized version of TaggedServiceProvider with cached registry lookups
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.Optimized.TaggedServiceProviderV2.CreateChildScope(Wpf.Scopes.Data.ScopeTag,System.Boolean)">
+            <summary>Creates a child scope with the given tag.</summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedServiceProviderV3">
+            <summary>
+            Highly optimized version of TaggedServiceProvider
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.Optimized.TaggedServiceProviderV4">
+            <summary>
+            V4 optimized version of TaggedServiceProvider with Flyweight pattern
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Wpf.Scopes.Services.ProxyHelper" -->
+        <member name="T:Wpf.Scopes.Services.RootTaggedProvider">
+            <summary>
+            Root-level tagged service provider implementation (Singleton).
+            Registered at application startup and provides root scope creation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.RootTaggedProvider.Registry">
+            <inheritdoc />
+        </member>
+        <member name="M:Wpf.Scopes.Services.RootTaggedProvider.CreateRootScope(Wpf.Scopes.Data.ScopeTag)">
+            <inheritdoc />
+        </member>
+        <member name="T:Wpf.Scopes.Services.ScopedTaggedProvider">
+            <summary>
+            Scope-level tagged service provider implementation (per tagged scope).
+            Created automatically for each tagged scope and provides access to
+            the current scope's ITaggedServiceProvider.
+            
+            Services like ContentManager should depend on IScopedTaggedProvider
+            to ensure they resolve services with proper tagged scope context.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.ScopedTaggedProvider.Provider">
+            <inheritdoc />
+        </member>
+        <member name="P:Wpf.Scopes.Services.ScopedTaggedProvider.Store">
+            <inheritdoc />
+        </member>
+        <member name="P:Wpf.Scopes.Services.ScopedTaggedProvider.CurrentTag">
+            <inheritdoc />
+        </member>
+        <member name="M:Wpf.Scopes.Services.ScopedTaggedProvider.GetService(System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="T:Wpf.Scopes.Services.SharedServiceProxy`1">
+            <summary>
+            A high-performance dynamic proxy that wraps a shared service instance.
+            It forwards all method calls to the target instance EXCEPT for the Dispose() method.
+            This prevents the Microsoft Dependency Injection container from disposing instances
+            that are owned by a parent scope (ScopeStore) but injected into a child scope.
+            
+            Uses Expression Trees and cached delegates for near-native performance.
+            </summary>
+            <typeparam name="T">The interface type of the service.</typeparam>
+        </member>
+        <member name="M:Wpf.Scopes.Services.SharedServiceProxy`1.#cctor">
+            <summary>
+            Static constructor.
+            Performs the heavy lifting of reflection and expression tree compilation once per type T.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.SharedServiceProxy`1.Create(`0)">
+            <summary>
+            Creates a new proxy instance for the specified target, or returns an existing one.
+            </summary>
+            <param name="target">The actual service instance to wrap.</param>
+            <returns>A proxy implementing interface T.</returns>
+        </member>
+        <member name="M:Wpf.Scopes.Services.SharedServiceProxy`1.CreateDelegate(System.Reflection.MethodInfo)">
+            <summary>
+            Compiles an Expression Tree into a fast delegate.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.TaggedScopeFactory">
+            <summary>
+            public factory for creating child scopes.
+            Returned when resolving IServiceScopeFactory from TaggedServiceProvider.
+            </summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.TaggedServiceProvider">
+            <summary>
+            Wraps IServiceProvider and intercepts resolution of tagged services.
+            </summary>
+        </member>
+        <member name="P:Wpf.Scopes.Services.TaggedServiceProvider.Parent">
+            <summary>
+            Parent provider in the scope hierarchy. Null for root scope.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.TaggedServiceProvider.CreateChildProvider(Wpf.Scopes.Data.ScopeTag)">
+            <summary>Creates a child scope with the given tag.</summary>
+        </member>
+        <member name="T:Wpf.Scopes.Services.TaggedServiceScopeWrapper">
+            <summary>
+            Wrapper for IServiceScope that returns TaggedServiceProvider as ServiceProvider.
+            Ensures factory delegates receive TaggedServiceProvider to access IScopeStore.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.TaggedServiceRegistry.CompileFactory(System.Type)">
+            <summary>
+            Kompilace factory delegátu pomocí Expression Trees.
+            Voláno POUZE při registraci, ne při runtime resolucí.
+            </summary>
+        </member>
+        <member name="M:Wpf.Scopes.Services.TaggedServiceRegistry.GetCachedServiceInfo(System.Type)">
+            <summary>
+            Gets cached service info in a single call. Cache is shared across all providers.
+            </summary>
+        </member>
+    </members>
+</doc>

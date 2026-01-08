@@ -1,0 +1,479 @@
+@page "/analysis"
+@inject AppState AppState
+@inject ILocalizationService Localization
+@implements IDisposable
+
+<PageTitle>Code Analysis</PageTitle>
+
+<div class="analysis-container">
+    <h1>📊 Code Analysis</h1>
+    <p class="description">Analyze namespaces, dependencies, and potential conflicts across projects.</p>
+
+    @if (!AppState.HasSolution)
+    {
+        <div class="empty-state">
+            <p>@Localization.Get(Strings.NoProjectsLoaded)</p>
+            <p><a href="/settings">@Localization.Get(Strings.NavSettings)</a></p>
+        </div>
+    }
+    else
+    {
+        <div class="analysis-tabs">
+            <button class="tab @(_activeTab == "namespaces" ? "active" : "")" @onclick='() => _activeTab = "namespaces"'>
+                📦 Namespaces
+            </button>
+            <button class="tab @(_activeTab == "conflicts" ? "active" : "")" @onclick='() => _activeTab = "conflicts"'>
+                ⚠️ Conflicts
+            </button>
+            <button class="tab @(_activeTab == "packages" ? "active" : "")" @onclick='() => _activeTab = "packages"'>
+                📦 Packages
+            </button>
+            <button class="tab @(_activeTab == "dependencies" ? "active" : "")" @onclick='() => _activeTab = "dependencies"'>
+                🔗 Dependencies
+            </button>
+        </div>
+
+        <div class="analysis-content">
+            @switch (_activeTab)
+            {
+                case "namespaces":
+                    @RenderNamespaces()
+                    break;
+                    
+                case "conflicts":
+                    @RenderConflicts()
+                    break;
+                    
+                case "packages":
+                    @RenderPackages()
+                    break;
+                    
+                case "dependencies":
+                    @RenderDependencies()
+                    break;
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string _activeTab = "namespaces";
+    
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private RenderFragment RenderNamespaces() => builder =>
+    {
+        var namespaceGroups = GetNamespaceAnalysis();
+        
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "namespace-analysis");
+        
+        // Summary
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "analysis-summary");
+        builder.OpenElement(4, "h3");
+        builder.AddContent(5, "📊 Summary");
+        builder.CloseElement();
+        
+        builder.OpenElement(6, "div");
+        builder.AddAttribute(7, "class", "summary-grid");
+        
+        builder.OpenElement(8, "div");
+        builder.AddAttribute(9, "class", "summary-card");
+        builder.OpenElement(10, "div");
+        builder.AddAttribute(11, "class", "summary-value");
+        builder.AddContent(12, namespaceGroups.Count());
+        builder.CloseElement();
+        builder.OpenElement(13, "div");
+        builder.AddAttribute(14, "class", "summary-label");
+        builder.AddContent(15, "Total Namespaces");
+        builder.CloseElement();
+        builder.CloseElement();
+        
+        builder.OpenElement(16, "div");
+        builder.AddAttribute(17, "class", "summary-card");
+        builder.OpenElement(18, "div");
+        builder.AddAttribute(19, "class", "summary-value");
+        builder.AddContent(20, AppState.CurrentSolution!.Projects.Count());
+        builder.CloseElement();
+        builder.OpenElement(21, "div");
+        builder.AddAttribute(22, "class", "summary-label");
+        builder.AddContent(23, "Projects");
+        builder.CloseElement();
+        builder.CloseElement();
+        
+        var topLevelNamespaces = namespaceGroups.Select(g => g.Key.Split('.').FirstOrDefault() ?? "").Distinct().Count();
+        builder.OpenElement(24, "div");
+        builder.AddAttribute(25, "class", "summary-card");
+        builder.OpenElement(26, "div");
+        builder.AddAttribute(27, "class", "summary-value");
+        builder.AddContent(28, topLevelNamespaces);
+        builder.CloseElement();
+        builder.OpenElement(29, "div");
+        builder.AddAttribute(30, "class", "summary-label");
+        builder.AddContent(31, "Root Namespaces");
+        builder.CloseElement();
+        builder.CloseElement();
+        
+        builder.CloseElement(); // summary-grid
+        builder.CloseElement(); // analysis-summary
+        
+        // Namespace list
+        builder.OpenElement(32, "div");
+        builder.AddAttribute(33, "class", "namespace-list");
+        builder.OpenElement(34, "h3");
+        builder.AddContent(35, "📝 Namespace Details");
+        builder.CloseElement();
+        
+        builder.OpenElement(36, "table");
+        builder.AddAttribute(37, "class", "analysis-table");
+        builder.OpenElement(38, "thead");
+        builder.OpenElement(39, "tr");
+        builder.OpenElement(40, "th");
+        builder.AddContent(41, "Namespace");
+        builder.CloseElement();
+        builder.OpenElement(42, "th");
+        builder.AddContent(43, "Projects");
+        builder.CloseElement();
+        builder.OpenElement(44, "th");
+        builder.AddContent(45, "Classes");
+        builder.CloseElement();
+        builder.OpenElement(46, "th");
+        builder.AddContent(47, "Files");
+        builder.CloseElement();
+        builder.CloseElement();
+        builder.CloseElement();
+        
+        builder.OpenElement(48, "tbody");
+        foreach (var ns in namespaceGroups.OrderBy(g => g.Key))
+        {
+            builder.OpenElement(49, "tr");
+            
+            builder.OpenElement(50, "td");
+            builder.AddAttribute(51, "class", "namespace-name");
+            builder.AddContent(52, ns.Key);
+            builder.CloseElement();
+            
+            builder.OpenElement(53, "td");
+            var projects = ns.SelectMany(c => c.Projects).Distinct().Count();
+            builder.AddContent(54, projects);
+            builder.CloseElement();
+            
+            builder.OpenElement(55, "td");
+            builder.AddContent(56, ns.Count());
+            builder.CloseElement();
+            
+            builder.OpenElement(57, "td");
+            var files = ns.SelectMany(c => c.Files).Distinct().Count();
+            builder.AddContent(58, files);
+            builder.CloseElement();
+            
+            builder.CloseElement(); // tr
+        }
+        builder.CloseElement(); // tbody
+        builder.CloseElement(); // table
+        
+        builder.CloseElement(); // namespace-list
+        builder.CloseElement(); // namespace-analysis
+    };
+
+    private RenderFragment RenderConflicts() => builder =>
+    {
+        var conflicts = GetConflicts();
+        
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "conflicts-analysis");
+        
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "analysis-summary");
+        builder.OpenElement(4, "h3");
+        builder.AddContent(5, conflicts.Any() ? "⚠️ Conflicts Detected" : "✅ No Conflicts");
+        builder.CloseElement();
+        
+        if (!conflicts.Any())
+        {
+            builder.OpenElement(6, "div");
+            builder.AddAttribute(7, "class", "alert alert-success");
+            builder.AddContent(8, "No naming conflicts detected across projects.");
+            builder.CloseElement();
+        }
+        else
+        {
+            builder.OpenElement(9, "div");
+            builder.AddAttribute(10, "class", "alert alert-warning");
+            builder.AddContent(11, $"Found {conflicts.Count()} potential conflicts that may cause issues during migration.");
+            builder.CloseElement();
+            
+            builder.OpenElement(12, "div");
+            builder.AddAttribute(13, "class", "conflicts-list");
+            
+            foreach (var conflict in conflicts)
+            {
+                builder.OpenElement(14, "div");
+                builder.AddAttribute(15, "class", "conflict-item");
+                
+                builder.OpenElement(16, "div");
+                builder.AddAttribute(17, "class", "conflict-header");
+                builder.OpenElement(18, "strong");
+                builder.AddContent(19, $"{conflict.Namespace}.{conflict.ClassName}");
+                builder.CloseElement();
+                builder.OpenElement(20, "span");
+                builder.AddAttribute(21, "class", "badge badge-warning");
+                builder.AddContent(22, $"{conflict.Occurrences} occurrences");
+                builder.CloseElement();
+                builder.CloseElement();
+                
+                builder.OpenElement(23, "div");
+                builder.AddAttribute(24, "class", "conflict-details");
+                builder.AddContent(25, "Found in:");
+                builder.OpenElement(26, "ul");
+                foreach (var location in conflict.Locations)
+                {
+                    builder.OpenElement(27, "li");
+                    builder.AddContent(28, $"{location.Project} → {location.File}");
+                    builder.CloseElement();
+                }
+                builder.CloseElement();
+                builder.CloseElement();
+                
+                builder.CloseElement(); // conflict-item
+            }
+            
+            builder.CloseElement(); // conflicts-list
+        }
+        
+        builder.CloseElement(); // analysis-summary
+        builder.CloseElement(); // conflicts-analysis
+    };
+
+    private RenderFragment RenderPackages() => builder =>
+    {
+        var packageAnalysis = GetPackageAnalysis();
+        
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "packages-analysis");
+        
+        builder.OpenElement(2, "h3");
+        builder.AddContent(3, "📦 Package Consolidation");
+        builder.CloseElement();
+        
+        builder.OpenElement(4, "table");
+        builder.AddAttribute(5, "class", "analysis-table");
+        builder.OpenElement(6, "thead");
+        builder.OpenElement(7, "tr");
+        builder.OpenElement(8, "th");
+        builder.AddContent(9, "Package");
+        builder.CloseElement();
+        builder.OpenElement(10, "th");
+        builder.AddContent(11, "Versions");
+        builder.CloseElement();
+        builder.OpenElement(12, "th");
+        builder.AddContent(13, "Projects");
+        builder.CloseElement();
+        builder.OpenElement(14, "th");
+        builder.AddContent(15, "Status");
+        builder.CloseElement();
+        builder.CloseElement();
+        builder.CloseElement();
+        
+        builder.OpenElement(16, "tbody");
+        foreach (var pkg in packageAnalysis.OrderByDescending(p => p.Value.Versions.Count).ThenBy(p => p.Key))
+        {
+            var hasMultipleVersions = pkg.Value.Versions.Count > 1;
+            
+            builder.OpenElement(17, "tr");
+            builder.AddAttribute(18, "class", hasMultipleVersions ? "warning-row" : "");
+            
+            builder.OpenElement(19, "td");
+            builder.AddContent(20, pkg.Key);
+            builder.CloseElement();
+            
+            builder.OpenElement(21, "td");
+            builder.AddContent(22, string.Join(", ", pkg.Value.Versions.OrderBy(v => v)));
+            builder.CloseElement();
+            
+            builder.OpenElement(23, "td");
+            builder.AddContent(24, pkg.Value.ProjectCount);
+            builder.CloseElement();
+            
+            builder.OpenElement(25, "td");
+            if (hasMultipleVersions)
+            {
+                builder.OpenElement(26, "span");
+                builder.AddAttribute(27, "class", "badge badge-warning");
+                builder.AddContent(28, "⚠️ Multiple versions");
+                builder.CloseElement();
+            }
+            else
+            {
+                builder.OpenElement(29, "span");
+                builder.AddAttribute(30, "class", "badge badge-success");
+                builder.AddContent(31, "✅ Unified");
+                builder.CloseElement();
+            }
+            builder.CloseElement();
+            
+            builder.CloseElement(); // tr
+        }
+        builder.CloseElement(); // tbody
+        builder.CloseElement(); // table
+        
+        builder.CloseElement(); // packages-analysis
+    };
+
+    private RenderFragment RenderDependencies() => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "dependencies-analysis");
+        
+        builder.OpenElement(2, "h3");
+        builder.AddContent(3, "🔗 Project Dependencies Graph");
+        builder.CloseElement();
+        
+        builder.OpenElement(4, "div");
+        builder.AddAttribute(5, "class", "graph-wrapper");
+        builder.OpenComponent<DependencyGraph>(6);
+        builder.AddAttribute(7, "Projects", AppState.CurrentSolution?.Projects ?? []);
+        builder.CloseComponent();
+        builder.CloseElement();
+        
+        builder.CloseElement(); // dependencies-analysis
+    };
+
+    // Analysis methods
+    private IEnumerable<IGrouping<string, (string ClassName, List<string> Projects, List<string> Files)>> GetNamespaceAnalysis()
+    {
+        if (AppState.CurrentSolution == null) return [];
+        
+        var classes = new List<(string Namespace, string ClassName, string Project, string File)>();
+        
+        foreach (var project in AppState.CurrentSolution.Projects)
+        {
+            foreach (var file in project.SourceFiles)
+            {
+                foreach (var cls in file.Classes)
+                {
+                    if (!string.IsNullOrEmpty(cls.Namespace))
+                    {
+                        classes.Add((cls.Namespace, cls.Name, project.Name, file.Name));
+                    }
+                }
+            }
+        }
+        
+        return classes
+            .GroupBy(c => c.Namespace)
+            .Select(g => g.GroupBy(c => c.ClassName)
+                .Select(cg => (
+                    ClassName: cg.Key,
+                    Projects: cg.Select(c => c.Project).Distinct().ToList(),
+                    Files: cg.Select(c => c.File).Distinct().ToList()
+                )))
+            .SelectMany(g => g)
+            .GroupBy(c => classes.First(x => x.ClassName == c.ClassName).Namespace);
+    }
+
+    private IEnumerable<ConflictInfo> GetConflicts()
+    {
+        if (AppState.CurrentSolution == null) return [];
+        
+        var classOccurrences = new Dictionary<string, List<ClassLocation>>();
+        
+        foreach (var project in AppState.CurrentSolution.Projects)
+        {
+            foreach (var file in project.SourceFiles)
+            {
+                foreach (var cls in file.Classes)
+                {
+                    var fullName = string.IsNullOrEmpty(cls.Namespace) 
+                        ? cls.Name 
+                        : $"{cls.Namespace}.{cls.Name}";
+                    
+                    if (!classOccurrences.ContainsKey(fullName))
+                    {
+                        classOccurrences[fullName] = [];
+                    }
+                    
+                    classOccurrences[fullName].Add(new ClassLocation
+                    {
+                        Project = project.Name,
+                        File = file.Name,
+                        Namespace = cls.Namespace ?? ""
+                    });
+                }
+            }
+        }
+        
+        return classOccurrences
+            .Where(kvp => kvp.Value.Count > 1)
+            .Select(kvp =>
+            {
+                var parts = kvp.Key.Split('.');
+                return new ConflictInfo
+                {
+                    Namespace = parts.Length > 1 ? string.Join(".", parts.Take(parts.Length - 1)) : "",
+                    ClassName = parts.Last(),
+                    Occurrences = kvp.Value.Count,
+                    Locations = kvp.Value
+                };
+            });
+    }
+
+    private Dictionary<string, PackageInfo> GetPackageAnalysis()
+    {
+        if (AppState.CurrentSolution == null) return [];
+        
+        var packages = new Dictionary<string, PackageInfo>();
+        
+        foreach (var project in AppState.CurrentSolution.Projects)
+        {
+            foreach (var pkg in project.PackageReferences)
+            {
+                if (!packages.ContainsKey(pkg.Name))
+                {
+                    packages[pkg.Name] = new PackageInfo
+                    {
+                        Name = pkg.Name,
+                        Versions = [],
+                        ProjectCount = 0
+                    };
+                }
+                
+                packages[pkg.Name].Versions.Add(pkg.Version);
+                packages[pkg.Name].ProjectCount++;
+            }
+        }
+        
+        return packages;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+
+    private record ConflictInfo
+    {
+        public string Namespace { get; init; } = "";
+        public string ClassName { get; init; } = "";
+        public int Occurrences { get; init; }
+        public List<ClassLocation> Locations { get; init; } = [];
+    }
+
+    private record ClassLocation
+    {
+        public string Project { get; init; } = "";
+        public string File { get; init; } = "";
+        public string Namespace { get; init; } = "";
+    }
+
+    private record PackageInfo
+    {
+        public string Name { get; init; } = "";
+        public HashSet<string> Versions { get; init; } = [];
+        public int ProjectCount { get; set; }
+    }
+}

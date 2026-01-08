@@ -1,0 +1,151 @@
+<UserControl x:Class="MigrationTool.Wpf.Views.ExplorerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:MigrationTool.Wpf.Markup"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="{loc:Localize ExplorerTitle}" 
+                       FontSize="28" FontWeight="Bold" Foreground="#1F2937"/>
+            <TextBlock Text="{loc:Localize ProjectExplorerDescription}" 
+                       FontSize="14" Foreground="#6B7280" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Projects List -->
+            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="16" Margin="0,0,12,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="{loc:Localize ExplorerProjects}" 
+                                   FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Content="🔄" Command="{Binding RefreshCommand}" 
+                                Width="30" Height="30" Margin="10,0,0,0"
+                                Background="Transparent" BorderThickness="0" 
+                                ToolTip="Refresh"/>
+                    </StackPanel>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Projects}" 
+                             SelectedItem="{Binding SelectedProject}"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F9FAFB" CornerRadius="4" Padding="10" Margin="0,2">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <TextBlock FontSize="12" Foreground="#6B7280" Margin="0,0,10,0">
+                                                <TextBlock.Text>
+                                                    <Binding Path="FileCount" StringFormat="{}{0} files"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock FontSize="12" Foreground="#6B7280">
+                                                <TextBlock.Text>
+                                                    <Binding Path="ClassCount" StringFormat="{}{0} classes"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Files -->
+            <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Selected Project Header -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,12" Visibility="{Binding SelectedProject, Converter={StaticResource NullToVisibility}}">
+                        <TextBlock Text="{Binding SelectedProject.Name}" 
+                                   FontSize="18" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedProject.Path}" 
+                                   FontSize="12" Foreground="#6B7280" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- File List -->
+                    <ListBox Grid.Row="1" 
+                             ItemsSource="{Binding Files}"
+                             SelectedItem="{Binding SelectedFile}"
+                             BorderThickness="0"
+                             Visibility="{Binding SelectedProject, Converter={StaticResource NullToVisibility}}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F3F4F6" Margin="0,2" Padding="8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Grid.Column="0" Text="📄" VerticalAlignment="Center"/>
+                                        
+                                        <StackPanel Grid.Column="1" Margin="10,0">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Namespace}" 
+                                                       FontSize="12" Foreground="#6B7280"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Border Background="#2563EB" CornerRadius="3" Padding="5,2" Margin="0,0,5,0">
+                                                <TextBlock FontSize="11" Foreground="White">
+                                                    <TextBlock.Text>
+                                                        <Binding Path="Classes.Count" StringFormat="{}{0}C"/>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Border>
+                                            <Border Background="#10B981" CornerRadius="3" Padding="5,2"
+                                                    Visibility="{Binding IsTestFile, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock FontSize="11" Foreground="White">
+                                                    <TextBlock.Text>
+                                                        <Binding Path="TestCount" StringFormat="{}{0}T"/>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Empty State -->
+                    <StackPanel Grid.Row="1" 
+                                VerticalAlignment="Center" 
+                                HorizontalAlignment="Center"
+                                Visibility="{Binding SelectedProject, Converter={StaticResource InverseBoolToVisibility}}">
+                        <TextBlock Text="📂" FontSize="48" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Select a project" FontSize="16" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

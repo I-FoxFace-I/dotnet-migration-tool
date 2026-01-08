@@ -1,0 +1,648 @@
+@page "/settings"
+@inject AppState AppState
+@inject ISolutionAnalyzer SolutionAnalyzer
+@inject ILocalizationService Localization
+@inject IJSRuntime JS
+@implements IDisposable
+
+<PageTitle>@Localization.Get(Strings.SettingsTitle)</PageTitle>
+
+<div class="settings-container">
+    <h1>@Localization.Get(Strings.SettingsTitle)</h1>
+    <p class="description">@Localization.Get(Strings.SettingsDescription)</p>
+
+    <div class="settings-form">
+        <!-- Quick Actions Section -->
+        <div class="form-section">
+            <h3>📂 Quick Load</h3>
+            
+            <div class="drag-drop-zone" 
+                 @ondrop="HandleDrop" 
+                 @ondragover="HandleDragOver" 
+                 @ondragenter="HandleDragEnter"
+                 @ondragleave="HandleDragLeave">
+                <div class="drop-icon">📁</div>
+                <h4>Drag & Drop</h4>
+                <p>Drag a <strong>.sln file</strong> or <strong>folder</strong> here</p>
+                <div class="or-divider">— OR —</div>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" @onclick="ShowQuickLoad" disabled="@_isLoading">
+                        📂 Quick Browse
+                    </button>
+                </div>
+            </div>
+            
+            <div class="fallback-note">
+                <small>💡 <strong>Tip:</strong> Drag a folder or .sln file from Windows Explorer, or paste the full path in the field below.</small>
+            </div>
+            
+            @if (_recentPaths.Any())
+            {
+                <div class="recent-paths">
+                    <label>Recent:</label>
+                    <div class="recent-list">
+                        @foreach (var path in _recentPaths.Take(5))
+                        {
+                            <button class="recent-item" @onclick="() => LoadRecentPath(path)" title="@path" disabled="@_isLoading">
+                                @(path.EndsWith(".sln") ? "📄" : "📁") @GetShortPath(path)
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-divider">
+            <span>OR</span>
+        </div>
+
+        <!-- Manual Path Entry -->
+        <div class="form-section">
+            <h3>📝 Enter Path Manually</h3>
+            
+            <div class="form-group">
+                <label>@Localization.Get(Strings.WorkspacePath)</label>
+                <div class="input-group">
+                    <input type="text" @bind="_workspacePath" @bind:event="oninput" class="form-control" 
+                           placeholder="C:\path\to\workspace or C:\path\to\solution.sln" />
+                    <button class="btn btn-primary" @onclick="LoadFromPath" disabled="@_isLoading">
+                        @if (_isLoading)
+                        {
+                            <span>Loading...</span>
+                        }
+                        else
+                        {
+                            <span>Load</span>
+                        }
+                    </button>
+                </div>
+                <small class="form-text">Enter a folder path to scan for solutions, or a direct path to a .sln file</small>
+            </div>
+
+            @if (_solutions.Any())
+            {
+                <div class="form-group">
+                    <label>@Localization.Get(Strings.SelectSolution)</label>
+                    <select @bind="_selectedSolution" class="form-control">
+                        <option value="">-- @Localization.Get(Strings.Select) --</option>
+                        @foreach (var solution in _solutions)
+                        {
+                            <option value="@solution">@System.IO.Path.GetFileName(solution)</option>
+                        }
+                    </select>
+                    <small class="form-text">@Localization.Get(Strings.SolutionsFound) @_solutions.Count</small>
+                    
+                    @if (!string.IsNullOrEmpty(_selectedSolution))
+                    {
+                        <button class="btn btn-success mt-2" @onclick="LoadSelectedSolution" disabled="@_isLoading">
+                            Load Selected Solution
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Current Solution Info -->
+        @if (AppState.HasSolution)
+        {
+            <div class="form-section current-solution">
+                <h3>✅ Current Solution</h3>
+                <div class="solution-info-card">
+                    <div class="solution-name">@AppState.CurrentSolution!.Name</div>
+                    <div class="solution-path">@AppState.CurrentSolution.Path</div>
+                    <div class="solution-stats">
+                        <span>📦 @AppState.CurrentSolution.ProjectCount projects</span>
+                        <span>🧪 @AppState.CurrentSolution.TestProjectCount test projects</span>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" @onclick="ClearSolution">Clear Solution</button>
+                </div>
+            </div>
+        }
+
+        <div class="form-divider"></div>
+
+        <!-- Language Settings -->
+        <div class="form-section">
+            <h3>🌐 Language</h3>
+            <div class="form-group">
+                <label>@Localization.Get(Strings.Language)</label>
+                <select @bind="_selectedLanguage" @bind:after="OnLanguageChanged" class="form-control language-select">
+                    @foreach (var lang in Localization.SupportedLanguages)
+                    {
+                        <option value="@lang.Key">@lang.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger mt-3">
+            <strong>Error:</strong> @_errorMessage
+            <button class="alert-close" @onclick="() => _errorMessage = string.Empty">×</button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(_successMessage))
+    {
+        <div class="alert alert-success mt-3">
+            <strong>Success:</strong> @_successMessage
+            <button class="alert-close" @onclick="() => _successMessage = string.Empty">×</button>
+        </div>
+    }
+</div>
+
+<style>
+    .form-section {
+        background-color: var(--light-color);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .form-divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+    
+    .form-divider::before,
+    .form-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: #ddd;
+    }
+    
+    .form-divider span {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .drag-drop-zone {
+        border: 3px dashed #cbd5e0;
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+    
+    .drag-drop-zone:hover,
+    .drag-drop-zone.drag-over {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+        transform: scale(1.02);
+    }
+    
+    .drop-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .drag-drop-zone h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+        color: var(--text-color);
+    }
+    
+    .drag-drop-zone p {
+        margin: 0 0 1.5rem 0;
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+    
+    .or-divider {
+        margin: 1.5rem 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .quick-actions .btn,
+    .file-picker-btn {
+        flex: 1;
+        min-width: 150px;
+        padding: 1rem;
+        font-size: 1rem;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .file-picker-btn.btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    
+    .file-picker-btn.btn-primary:hover {
+        background-color: #2980b9;
+    }
+    
+    .file-picker-btn.btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+        border: none;
+    }
+    
+    .file-picker-btn.btn-secondary:hover {
+        background-color: #7f8c8d;
+    }
+    
+    .fallback-note {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background-color: rgba(52, 152, 219, 0.1);
+        border-left: 4px solid var(--primary-color);
+        border-radius: 4px;
+    }
+    
+    .fallback-note small {
+        color: #2c3e50;
+        line-height: 1.5;
+    }
+    
+    .recent-paths {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+    }
+    
+    .recent-paths label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .recent-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .recent-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .recent-item:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        border-color: var(--primary-color);
+    }
+    
+    .current-solution {
+        background-color: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .solution-info-card {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .solution-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .solution-path {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.75rem;
+        word-break: break-all;
+    }
+    
+    .solution-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .language-select {
+        max-width: 200px;
+    }
+    
+    .alert-close {
+        float: right;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        opacity: 0.5;
+    }
+    
+    .alert-close:hover {
+        opacity: 1;
+    }
+    
+    .btn-outline-danger {
+        background-color: transparent;
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: var(--danger-color);
+        color: white;
+    }
+    
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 1rem; }
+</style>
+
+@code {
+    private string _workspacePath = string.Empty;
+    private string _selectedSolution = string.Empty;
+    private string _selectedLanguage = "en";
+    private List<string> _solutions = [];
+    private string _errorMessage = string.Empty;
+    private string _successMessage = string.Empty;
+    private bool _isLoading = false;
+    private List<string> _recentPaths = [];
+
+#if DEBUG
+    private const string DEFAULT_DEBUG_PATH = @"C:\Users\mrmar\source\repos\Sandbox\Autofac\Framework.sln";
+#endif
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnChange += StateHasChanged;
+        
+        // Use debug default path if available and nothing is loaded
+        #if DEBUG
+        if (string.IsNullOrEmpty(AppState.WorkspacePath) && File.Exists(DEFAULT_DEBUG_PATH))
+        {
+            _workspacePath = DEFAULT_DEBUG_PATH;
+            await LoadFromPath();
+        }
+        else
+        #endif
+        {
+            _workspacePath = AppState.WorkspacePath;
+        }
+        
+        _selectedLanguage = Localization.CurrentLanguage;
+        
+        // Load recent paths from AppState
+        _recentPaths = AppState.RecentPaths.ToList();
+
+        if (!string.IsNullOrEmpty(_workspacePath) && Directory.Exists(_workspacePath))
+        {
+            await LoadSolutionsAsync();
+        }
+    }
+
+    private void HandleDragOver(DragEventArgs e)
+    {
+        // Prevent default to allow drop
+    }
+
+    private void HandleDragEnter(DragEventArgs e)
+    {
+        // Visual feedback could be added here via JS interop
+    }
+
+    private void HandleDragLeave(DragEventArgs e)
+    {
+        // Visual feedback could be removed here via JS interop
+    }
+
+    private async Task HandleDrop(DragEventArgs e)
+    {
+        try
+        {
+            _errorMessage = string.Empty;
+            _successMessage = string.Empty;
+            
+            // Note: Blazor Server drag & drop has limitations
+            // We need to use JS interop to get the file/folder path
+            // For now, show a helpful message
+            _errorMessage = "ℹ️ Drag & drop from Windows Explorer detected! Please paste the full path in the text field below.";
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task ShowQuickLoad()
+    {
+        try
+        {
+            _errorMessage = string.Empty;
+            
+            // Use JS prompt as a reliable cross-browser solution
+            var path = await JS.InvokeAsync<string>("promptForPath", 
+                "Enter the full path to a folder or .sln file:", 
+                _workspacePath);
+            
+            if (!string.IsNullOrEmpty(path))
+            {
+                _workspacePath = path.Trim();
+                await LoadFromPath();
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadRecentPath(string path)
+    {
+        _workspacePath = path;
+        await LoadFromPath();
+    }
+
+    private void AddToRecentPaths(string path)
+    {
+        _recentPaths.Remove(path);
+        _recentPaths.Insert(0, path);
+        if (_recentPaths.Count > 10)
+        {
+            _recentPaths = _recentPaths.Take(10).ToList();
+        }
+        AppState.RecentPaths = _recentPaths;
+    }
+
+    private string GetShortPath(string path)
+    {
+        if (path.Length <= 40) return path;
+        
+        var fileName = Path.GetFileName(path);
+        var dir = Path.GetDirectoryName(path) ?? "";
+        
+        if (dir.Length > 30)
+        {
+            var parts = dir.Split(Path.DirectorySeparatorChar);
+            if (parts.Length > 2)
+            {
+                return $"{parts[0]}\\...\\{parts[^1]}\\{fileName}";
+            }
+        }
+        
+        return $"...{path[^40..]}";
+    }
+
+    private async Task LoadFromPath()
+    {
+        _errorMessage = string.Empty;
+        _successMessage = string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(_workspacePath))
+        {
+            _errorMessage = "Please enter a path";
+            return;
+        }
+
+        // Check if it's a .sln file directly
+        if (_workspacePath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
+        {
+            if (File.Exists(_workspacePath))
+            {
+                await LoadSolutionAsync(_workspacePath);
+            }
+            else
+            {
+                _errorMessage = $"Solution file not found: {_workspacePath}";
+            }
+        }
+        // Otherwise treat as directory
+        else if (Directory.Exists(_workspacePath))
+        {
+            AppState.WorkspacePath = _workspacePath;
+            await LoadSolutionsAsync();
+            
+            if (_solutions.Count == 0)
+            {
+                _errorMessage = "No .sln files found in this directory";
+            }
+            else if (_solutions.Count == 1)
+            {
+                // Auto-load if only one solution
+                await LoadSolutionAsync(_solutions[0]);
+            }
+            else
+            {
+                _successMessage = $"Found {_solutions.Count} solutions. Please select one.";
+            }
+        }
+        else
+        {
+            _errorMessage = $"Path not found: {_workspacePath}";
+        }
+    }
+
+    private async Task LoadSelectedSolution()
+    {
+        if (!string.IsNullOrEmpty(_selectedSolution))
+        {
+            await LoadSolutionAsync(_selectedSolution);
+        }
+    }
+
+    private async Task LoadSolutionsAsync()
+    {
+        if (string.IsNullOrEmpty(_workspacePath))
+            return;
+
+        try
+        {
+            _isLoading = true;
+            StateHasChanged();
+            
+            _solutions = (await SolutionAnalyzer.FindSolutionsAsync(_workspacePath)).ToList();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task LoadSolutionAsync(string solutionPath)
+    {
+        try
+        {
+            _isLoading = true;
+            _errorMessage = string.Empty;
+            StateHasChanged();
+            
+            var solution = await SolutionAnalyzer.AnalyzeSolutionAsync(solutionPath);
+            AppState.CurrentSolution = solution;
+            AppState.WorkspacePath = Path.GetDirectoryName(solutionPath) ?? string.Empty;
+            _workspacePath = AppState.WorkspacePath;
+            _successMessage = $"Successfully loaded {solution.Name} with {solution.ProjectCount} projects!";
+            
+            // Add to recent paths
+            AddToRecentPaths(solutionPath);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load solution: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void OnLanguageChanged()
+    {
+        Localization.CurrentLanguage = _selectedLanguage;
+    }
+
+    private void ClearSolution()
+    {
+        AppState.CurrentSolution = null;
+        _solutions.Clear();
+        _selectedSolution = string.Empty;
+        _successMessage = "Solution cleared";
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

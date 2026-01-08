@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <!-- TargetFramework is set in individual projects, not here (MAUI has different TFM) -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  
+  <!-- Default TargetFramework for non-MAUI projects -->
+  <PropertyGroup Condition="'$(UseMaui)' != 'true'">
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+</Project>

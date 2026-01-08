@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/planner.css" />
+    <link rel="stylesheet" href="css/analysis.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet @rendermode="@RenderMode.InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="@RenderMode.InteractiveServer" />
+    <script src="_framework/blazor.web.js"></script>
+    <script>
+        function downloadFile(fileName, contentType, base64Content) {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = 'data:' + contentType + ';base64,' + base64Content;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // File System Access API for folder picker
+        async function showDirectoryPicker() {
+            if (!('showDirectoryPicker' in window)) {
+                throw new Error('Directory picker not supported');
+            }
+            try {
+                const dirHandle = await window.showDirectoryPicker();
+                // Note: We can only get the name, not the full path due to security
+                // Return the name and let user confirm/edit the full path
+                return dirHandle.name;
+            } catch (e) {
+                if (e.name === 'AbortError') return null;
+                throw e;
+            }
+        }
+
+        // File System Access API for file picker
+        async function showFilePicker(extension) {
+            if (!('showOpenFilePicker' in window)) {
+                throw new Error('File picker not supported');
+            }
+            try {
+                const [fileHandle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'Solution files',
+                        accept: { 'application/octet-stream': [extension] }
+                    }]
+                });
+                // Note: We can only get the name, not the full path due to security
+                return fileHandle.name;
+            } catch (e) {
+                if (e.name === 'AbortError') return null;
+                throw e;
+            }
+        }
+
+        // Prompt for path (fallback)
+        function promptForPath(message, defaultValue) {
+            return prompt(message, defaultValue || '');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Wpf.Abstractions -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Abstractions\bin\Debug\net9.0\Wpf.Abstractions.dll
+  MigrationTool.Core.Abstractions -> C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\src\MigrationTool\MigrationTool.Core.Abstractions\bin\Debug\net9.0\MigrationTool.Core.Abstractions.dll
+  MigrationTool.Localization -> C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\src\MigrationTool\MigrationTool.Localization\bin\Debug\net9.0\MigrationTool.Localization.dll
+  Wpf.Scopes -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Scopes\bin\Debug\net9.0\Wpf.Scopes.dll
+  MigrationTool.Core -> C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\src\MigrationTool\MigrationTool.Core\bin\Debug\net9.0\MigrationTool.Core.dll
+  Wpf.Contracts -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Contracts\bin\Debug\net9.0\Wpf.Contracts.dll
+  Wpf.ViewModels -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.ViewModels\bin\Debug\net9.0-windows\Wpf.ViewModels.dll
+  Wpf.Views -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Views\bin\Debug\net9.0-windows\Wpf.Views.dll
+  Wpf.Services -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Services\bin\Debug\net9.0-windows\Wpf.Services.dll
+  Wpf.Services.MicrosoftDI -> C:\Users\mrmar\source\repos\Sandbox\Autofac\src\Wpf\Wpf.Services.MicrosoftDI\bin\Debug\net9.0-windows\Wpf.Services.MicrosoftDI.dll
+  MigrationTool.Wpf -> C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\src\MigrationTool\MigrationTool.Wpf\bin\Debug\net9.0-windows\MigrationTool.Wpf.dll
+  MigrationTool.Wpf.Tests -> C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\tests\MigrationTool\MigrationTool.Wpf.Tests\bin\Debug\net9.0-windows\MigrationTool.Wpf.Tests.dll
+Test run for C:\Users\mrmar\source\repos\Sandbox\Autofac\tools\tests\MigrationTool\MigrationTool.Wpf.Tests\bin\Debug\net9.0-windows\MigrationTool.Wpf.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    93, Skipped:     0, Total:    93, Duration: 367 ms - MigrationTool.Wpf.Tests.dll (net9.0)

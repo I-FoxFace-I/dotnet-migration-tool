@@ -1,0 +1,877 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Wpf.Contracts</name>
+    </assembly>
+    <members>
+        <member name="T:Wpf.Contracts.Enums.DialogModality">
+            <summary>
+            Dialog modality options
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogModality.AppModal">
+            <summary>
+            Application-modal dialog (ShowDialog)
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogModality.WindowModal">
+            <summary>
+            Window-modal dialog (disables owner tree, shows non-modal)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Enums.DialogType">
+            <summary>
+            Type/category of dialog
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Confirmation">
+            <summary>
+            Simple confirmation dialog (Yes/No, OK/Cancel)
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Information">
+            <summary>
+            Information display dialog
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Warning">
+            <summary>
+            Warning dialog
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Error">
+            <summary>
+            Error dialog
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Input">
+            <summary>
+            Input dialog (text entry, forms)
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Selection">
+            <summary>
+            Selection dialog (pick from list)
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Detail">
+            <summary>
+            Detail/Edit dialog for entity
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Settings">
+            <summary>
+            Settings/Configuration dialog
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.DialogType.Custom">
+            <summary>
+            Custom dialog type
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Enums.SessionState">
+            <summary>
+            Session lifecycle state
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.SessionState.Active">
+            <summary>
+            Session is active and can create windows
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.SessionState.Closing">
+            <summary>
+            Session is closing (windows being disposed)
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.SessionState.Closed">
+            <summary>
+            Session is closed
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Enums.WindowStatusColor">
+            <summary>
+            Status color representing window lifecycle state
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowStatusColor.Green">
+            <summary>
+            Green - window is open and active
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowStatusColor.Yellow">
+            <summary>
+            Yellow - window is closing
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowStatusColor.Red">
+            <summary>
+            Red - window is closed or faulted
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Enums.WindowType">
+            <summary>
+            Type of window
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowType.Window">
+            <summary>
+            Regular window
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowType.Dialog">
+            <summary>
+            Dialog window
+            </summary>
+        </member>
+        <member name="F:Wpf.Contracts.Enums.WindowType.Shell">
+            <summary>
+            Shell window (with regions/navigation)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Content.NavigatorCloseRequestedEventArgs">
+            <summary>
+            Event args for close request (legacy support)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Session.SessionEventArgs">
+            <summary>
+            Event arguments for session lifecycle events
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Events.Session.SessionEventArgs.SessionId">
+            <summary>
+            Session identifier
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Events.Session.SessionEventArgs.Tag">
+            <summary>
+            Session scope tag
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Events.Session.SessionEventArgs.Timestamp">
+            <summary>
+            Timestamp of the event
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Window.ChildWindowClosedEventArgs">
+            <summary>
+            Event args for when a child window is closed
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Window.WindowCloseRequestedEventArgs">
+            <summary>
+            Event args for window close request from navigation service
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Events.Window.WindowCloseRequestedEventArgs.ShowConfirmation">
+            <summary>
+            Should show confirmation dialog before closing
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Events.Window.WindowCloseRequestedEventArgs.ConfirmationMessage">
+            <summary>
+            Optional custom confirmation message
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Window.WindowContextErrorEventArgs">
+            <summary>
+            Event args for window context errors
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Events.Window.WindowOpenedEventArgs">
+            <summary>
+            Event args for window opened
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Parameters.BaseItemParameters">
+            <summary>
+            Base parameters for item-based ViewModels (detail, edit, etc.)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Parameters.BaseItemParameters.CorrelationId">
+            <summary>
+            Correlation ID for tracking related operations
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Parameters.BaseItemParameters.ReadOnly">
+            <summary>
+            Whether the item is read-only
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Parameters.BaseItemParameters.Item">
+            <summary>
+            The item (for derived classes to override)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Parameters.BaseModelParameters">
+            <summary>
+            Base record for ViewModel parameters
+            Provides default CorrelationId generation
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Parameters.BaseModelParameters.CorrelationId">
+            <summary>
+            Correlation ID for tracking related operations
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Parameters.CollectionParameters">
+            <summary>
+            Parameters for list ViewModels with optional filter
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Parameters.EntityParameters`1">
+            <summary>
+            Parameters for dialog ViewModels with data payload
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Parameters.IViewModelParameters">
+            <summary>
+            Base interface for ViewModel parameters
+            Used when creating ViewModels with initialization data
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Parameters.IViewModelParameters.CorrelationId">
+            <summary>
+            Correlation ID for tracking related operations
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Wpf.Contracts.Parameters.KeyParameters`1" -->
+        <member name="T:Wpf.Contracts.Parameters.WorkflowParameters">
+            <summary>
+            Parameters for workflow ViewModels
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.BaseResult">
+            <summary>
+            Base record for ViewModel results
+            Provides abstract getter for Guid Key 
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.DefaultKey">
+            <summary>
+            Default key created by Guid.NewGuid() method.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.Status">
+            <summary>
+            Defines the result status of dialog operation.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.Key">
+            <summary>
+            Key identifying the result
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.IsSuccess">
+            <summary>
+            Indicates if the operation was successful
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.ErrorMessage">
+            <summary>
+            Optional error message if operation failed
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.BaseResult.Exception">
+            <summary>
+            Exception if operation failed with exception
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.DialogResult">
+            <summary>
+            Simple dialog result without data
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.DialogResult.Value">
+            <summary>
+            Result value (bool)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.DialogResult`1">
+            <summary>
+            Generic result container for dialogs
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.DialogResult`1.Value">
+            <summary>
+            Result value
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.IDialogResult">
+            <summary>
+            Dialog-specific result extending base Result Pattern
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.IDialogResult.Key">
+            <summary>
+            Key identifying the result
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.IDialogResult.Status">
+            <summary>
+            Dialog status (Success, Cancel, Error, Pending)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.IDialogResult.IsCancelled">
+            <summary>
+            Whether dialog was cancelled
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Dialog.IDialogResult.IsComplete">
+            <summary>
+            Whether dialog operation is complete (Success or Cancel)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.IDialogResult`1">
+            <summary>
+            Dialog result with typed data
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Dialog.IDialogResult`2">
+            <summary>
+            Base interface for ViewModel results with factory methods
+            Used when ViewModels need to return data (e.g., dialogs)
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Operation.NavigationResult">
+            <summary>
+            Result of a navigation operation
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Operation.NavigationResult.ViewModelType">
+            <summary>
+            Type of ViewModel that was navigated to (if successful)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Results.Operation.NavigationResult.RegionName">
+            <summary>
+            Region name where navigation occurred
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Results.Operation.NavigationResult.Success``1(System.String)">
+            <summary>
+            Create a successful navigation result
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Results.Operation.NavigationResult.Success(System.Type,System.String)">
+            <summary>
+            Create a successful navigation result with Type
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Results.Operation.NavigationResult.Failure(System.String,System.Exception,System.String)">
+            <summary>
+            Create a failed navigation result
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Operation.OperationResult">
+            <summary>
+            Non-generic result for void operations
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Results.Operation.OperationResult`1">
+            <summary>
+            Result pattern for operations that can fail
+            </summary>
+        </member>
+        <member name="T:Wpf.Contracts.Tokens.SessionToken">
+            <summary>
+            Type-safe session identifier with metadata.
+            Sessions are containers for related windows sharing state.
+            Implements IToken&lt;SessionToken&gt; for polymorphic token operations.
+            Contains ScopeTag for session categorization.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.Id">
+            <summary>
+            Unique identifier
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.Name">
+            <summary>
+            Session name (for debugging/display)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.Tag">
+            <summary>
+            Scope tag defining the session category and context
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.ParentId">
+            <summary>
+            Parent session token ID (if this is a child session)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.CreatedAt">
+            <summary>
+            Creation timestamp
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.State">
+            <summary>
+            Session lifecycle state
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.Color">
+            <summary>
+            Token status color derived from session state.
+            Active = Green, Closing = Yellow, Closed = Red.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.IsEmpty">
+            <summary>
+            Gets a value indicating whether the identifier is empty.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.Create(System.String,System.String,System.Nullable{System.Guid})">
+            <summary>
+            Create a new session token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.FromGuid(System.Guid)">
+            <summary>
+            Create from existing Guid (for migration/compatibility).
+            Creates a basic session with no name.
+            Required by IToken&lt;SessionToken&gt; interface.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.FromGuid(System.Guid,System.String,System.String,System.Nullable{System.Guid})">
+            <summary>
+            Create from existing Guid with optional name and tag.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.op_Implicit(Wpf.Contracts.Tokens.SessionToken)~System.Guid">
+            <summary>
+            Implicit conversion to Guid (returns Id).
+            Allows using SessionToken wherever Guid is expected.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.op_Implicit(System.Guid)~Wpf.Contracts.Tokens.SessionToken">
+            <summary>
+            Implicit conversion from Guid.
+            Creates a basic session with no name. For full control, use FromGuid overload.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.WithState(Wpf.Contracts.Enums.SessionState)">
+            <summary>
+            Update state
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.WithName(System.String)">
+            <summary>
+            Update name
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.WithTag(System.String)">
+            <summary>
+            Update tag
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.WithParentId(System.Nullable{System.Guid})">
+            <summary>
+            Update parent ID
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.IsActive">
+            <summary>
+            Whether session is active
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.IsClosing">
+            <summary>
+            Whether session is closing
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.IsClosed">
+            <summary>
+            Whether session is closed
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.SessionToken.HasParent">
+            <summary>
+            Whether this is a child session
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.ToString">
+            <summary>
+            Returns a string that represents the current session, including its identifier, name, tag, and state.
+            </summary>
+            <remarks>The returned string includes the first eight characters of the session's unique identifier,
+            followed by the name and tag if available, and the current state in brackets. This method is useful for
+            debugging and monitoring session information.</remarks>
+            <returns>A string containing a summary of the session's ID, name, tag, and state. The format is suitable for logging or
+            display purposes.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.GetHashCode">
+            <summary>
+            Serves as the default hash function for the current object.
+            </summary>
+            <returns>A 32-bit signed integer hash code representing the current object.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current session token.
+            </summary>
+            <remarks>This method supports comparison with both <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> instances and <see
+            cref="T:System.Guid"/> values. For other types, the method returns false.</remarks>
+            <param name="obj">The object to compare with the current session token. Can be a <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> or a <see
+            cref="T:System.Guid"/>.</param>
+            <returns>true if the specified object is equal to the current session token; otherwise, false.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.Equals(Wpf.Contracts.Tokens.SessionToken,Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Determines whether two specified <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> instances are equal.
+            </summary>
+            <remarks>Equality is determined by comparing the identifiers of the two <see cref="T:Wpf.Contracts.Tokens.SessionToken"/>
+            instances. This method supports comparison when either or both arguments are null.</remarks>
+            <param name="x">The first <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> to compare, or <see langword="null"/>.</param>
+            <param name="y">The second <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> to compare, or <see langword="null"/>.</param>
+            <returns>true if both <paramref name="x"/> and <paramref name="y"/> are null, or if both are non-null and have the same
+            identifier; otherwise, false.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.GetHashCode(Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Returns a hash code for the specified <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> instance.
+            </summary>
+            <param name="obj">The <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> object for which to compute the hash code. Cannot be null.</param>
+            <returns>An integer hash code representing the specified <see cref="T:Wpf.Contracts.Tokens.SessionToken"/>.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.Equals(Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Determines whether the current SessionToken instance is equal to the specified SessionToken.
+            </summary>
+            <param name="other">The SessionToken to compare with the current instance. Can be null.</param>
+            <returns>true if the specified SessionToken is not null and has the same Id as the current instance; otherwise, false.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.SessionToken.op_Equality(Wpf.Contracts.Tokens.SessionToken,Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Determines whether two <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> instances are equal.
+            </summary>
+            <remarks>Equality is determined by comparing the values of the two <see cref="T:Wpf.Contracts.Tokens.SessionToken"/>
+            instances. If both operands are null, the result is true.</remarks>
+            <param name="lhs">The first <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> to compare.</param>
+            <param name="rhs">The second <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> to compare.</param>
+            <returns>true if the specified <see cref="T:Wpf.Contracts.Tokens.SessionToken"/> instances are equal; otherwise, false.</returns>
+        </member>
+        <member name="T:Wpf.Contracts.Tokens.WindowToken">
+            <summary>
+            Type-safe window identifier with metadata.
+            Replaces Guid windowId for better type safety, debugging, and LINQ queries.
+            Implements IToken&lt;WindowToken&gt; for polymorphic token operations.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.Id">
+            <summary>
+            Unique identifier
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.Type">
+            <summary>
+            Type of window (Window, Dialog, Shell)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.ParentId">
+            <summary>
+            Parent window ID (if child window)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.SessionId">
+            <summary>
+            Session ID (if in session)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.CreatedAt">
+            <summary>
+            Creation timestamp
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.Color">
+            <summary>
+            Token status color representing lifecycle state.
+            Green = Open, Yellow = Closing, Red = Closed/Faulted.
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsEmpty">
+            <summary>
+            Gets a value indicating whether the current identifier is empty.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateWindow(System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Create a token for a regular window
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateWindow(Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Create a token for a child window from parent token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateDialog(System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Create a token for a dialog
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateDialog(Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Create a token for a dialog from optional parent token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateShell(System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Create a token for a shell window
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.CreateShell(Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Create a token for a shell window from session token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.FromGuid(System.Guid)">
+            <summary>
+            Create a token from existing Guid (for migration/compatibility).
+            Creates a basic Window token with default settings.
+            Required by IToken&lt;WindowToken&gt; interface.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.FromGuid(System.Guid,Wpf.Contracts.Enums.WindowType,System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Create a token from existing Guid with full control over token properties.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.op_Implicit(Wpf.Contracts.Tokens.WindowToken)~System.Guid">
+            <summary>
+            Implicit conversion to Guid (returns Id).
+            Allows using WindowToken wherever Guid is expected.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.op_Implicit(System.Guid)~Wpf.Contracts.Tokens.WindowToken">
+            <summary>
+            Implicit conversion from Guid.
+            Creates a basic Window token. For full control, use FromGuid overload.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.WithParentId(System.Nullable{System.Guid})">
+            <summary>
+            Create a new token with updated parent ID
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.WithSessionId(System.Nullable{System.Guid})">
+            <summary>
+            Create a new token with updated session ID
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.WithSession(Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Create a new token with session from SessionToken
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.WithColor(Wpf.Abstractions.Identity.TokenColor)">
+            <summary>
+            Create a new token with updated color
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.WithLifecycleState(Wpf.Contracts.Enums.WindowLifecycleState)">
+            <summary>
+            Create a new token with color based on lifecycle state
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsChild">
+            <summary>
+            Whether this window has a parent
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsInSession">
+            <summary>
+            Whether this window belongs to a session
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsDialog">
+            <summary>
+            Whether this is a dialog window
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsShell">
+            <summary>
+            Whether this is a shell window
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsWindow">
+            <summary>
+            Whether this is a regular window
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsOpen">
+            <summary>
+            Whether window is open (Green status)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsClosing">
+            <summary>
+            Whether window is closing (Yellow status)
+            </summary>
+        </member>
+        <member name="P:Wpf.Contracts.Tokens.WindowToken.IsClosed">
+            <summary>
+            Whether window is closed (Red status)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.Equals(System.Guid)">
+            <summary>
+            Compares this token's Id with another Guid.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current WindowToken instance.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.GetHashCode">
+            <summary>
+            Returns a hash code for the current object instance.
+            </summary>
+            <returns>An integer value that represents the hash code for this instance.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.Equals(Wpf.Contracts.Tokens.WindowToken,Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Determines whether two <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> instances are equal by comparing their identifiers.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.GetHashCode(Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Returns a hash code for the specified <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> instance.
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.Equals(Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Determines whether the current WindowToken instance is equal to the specified WindowToken.
+            </summary>
+            <param name="other">The WindowToken to compare with the current instance. Can be null.</param>
+            <returns>true if the specified WindowToken is not null and has the same Id as the current instance; otherwise, false.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.op_Equality(Wpf.Contracts.Tokens.WindowToken,Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Determines whether two <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> instances are equal.
+            </summary>
+            <remarks>Equality is determined by comparing the values of the two instances. If both operands are
+            null, the result is true.</remarks>
+            <param name="lhs">The first <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> to compare.</param>
+            <param name="rhs">The second <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> to compare.</param>
+            <returns>true if the specified <see cref="T:Wpf.Contracts.Tokens.WindowToken"/> instances are equal; otherwise, false.</returns>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowToken.op_Inequality(Wpf.Contracts.Tokens.WindowToken,Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Determines whether two WindowToken instances are not equal.
+            </summary>
+            <remarks>This operator performs a value-based comparison using the Equals method. If both operands are
+            null, they are considered equal.</remarks>
+            <param name="lhs">The first WindowToken to compare.</param>
+            <param name="rhs">The second WindowToken to compare.</param>
+            <returns>true if the specified WindowToken instances are not equal; otherwise, false.</returns>
+        </member>
+        <member name="T:Wpf.Contracts.Tokens.WindowTokenExtensions">
+            <summary>
+            Extension methods for WindowToken conversions and utilities
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToWindowToken(System.Guid,Wpf.Contracts.Enums.WindowType)">
+            <summary>
+            Converts Guid to WindowToken (creates Window type by default)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToWindowToken(System.Guid,Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Converts Guid to WindowToken with parent
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToDialogToken(System.Guid,Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Converts Guid to DialogToken
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToShellToken(System.Guid,Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Converts Guid to ShellToken
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToGuids(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Converts collection of WindowTokens to Guids
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.ToWindowTokens(System.Collections.Generic.IEnumerable{System.Guid},Wpf.Contracts.Enums.WindowType)">
+            <summary>
+            Converts collection of Guids to WindowTokens
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.FindById(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},System.Guid)">
+            <summary>
+            Finds token by Guid ID
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.WithParent(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},System.Guid)">
+            <summary>
+            Filters tokens by parent ID
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.WithParent(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},Wpf.Contracts.Tokens.WindowToken)">
+            <summary>
+            Filters tokens by parent token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.InSession(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},System.Guid)">
+            <summary>
+            Filters tokens by session ID
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.InSession(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},Wpf.Contracts.Tokens.SessionToken)">
+            <summary>
+            Filters tokens by session token
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.OfType(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken},Wpf.Contracts.Enums.WindowType)">
+            <summary>
+            Filters tokens by type
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Dialogs(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only dialogs
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Windows(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only windows (non-dialog, non-shell)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Shells(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only shells
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Open(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only open windows (Green status)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Closing(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only closing windows (Yellow status)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Closed(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets only closed windows (Red status)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Roots(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets root windows (no parent)
+            </summary>
+        </member>
+        <member name="M:Wpf.Contracts.Tokens.WindowTokenExtensions.Children(System.Collections.Generic.IEnumerable{Wpf.Contracts.Tokens.WindowToken})">
+            <summary>
+            Gets child windows (has parent)
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,16 @@
+# Migration Tool Dependencies
+# Python 3.10+
+
+# UI Framework
+streamlit>=1.28.0
+
+# Data handling
+dataclasses-json>=0.6.0
+
+# Utilities (standard library, listed for documentation)
+# pathlib - included in Python 3.4+
+# typing - included in Python 3.5+
+# re - included
+# xml.etree - included
+# shutil - included
+# subprocess - included

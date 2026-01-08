@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>MigrationTool.Wpf</RootNamespace>
+    <AssemblyName>MigrationTool.Wpf</AssemblyName>
+    <ApplicationIcon></ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Additional packages -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WPF Framework (project references) -->
+    <ProjectReference Include="..\..\..\..\src\Wpf\Wpf.Services.MicrosoftDI\Wpf.Services.MicrosoftDI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Wpf\Wpf.ViewModels\Wpf.ViewModels.csproj" />
+    
+    <!-- MigrationTool Core -->
+    <ProjectReference Include="..\MigrationTool.Core.Abstractions\MigrationTool.Core.Abstractions.csproj" />
+    <ProjectReference Include="..\MigrationTool.Core\MigrationTool.Core.csproj" />
+    <ProjectReference Include="..\MigrationTool.Localization\MigrationTool.Localization.csproj" />
+  </ItemGroup>
+
+</Project>
