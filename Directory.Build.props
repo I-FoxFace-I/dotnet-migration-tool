@@ -3,12 +3,25 @@
     <!-- TargetFramework is set in individual projects, not here (MAUI has different TFM) -->
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    
+    <!-- Centralized output paths - keeps bin/obj out of project folders -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory).build\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).build\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    
+    <!-- Append runtime identifier for multi-targeted builds -->
+    <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   
   <!-- Default TargetFramework for non-MAUI projects -->
   <PropertyGroup Condition="'$(UseMaui)' != 'true'">
     <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+  
+  <!-- WPF projects need Windows TFM -->
+  <PropertyGroup Condition="'$(UseWPF)' == 'true'">
+    <TargetFramework>net9.0-windows</TargetFramework>
   </PropertyGroup>
 </Project>

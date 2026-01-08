@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RIQ3gGbSN54=",
+  "dgSpecHash": "y0CwkgD/jCs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Maui.Tests\\MigrationTool.Maui.Tests.csproj",
+  "projectFilePath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Maui.Tests\\MigrationTool.Maui.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mrmar\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\mrmar\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",

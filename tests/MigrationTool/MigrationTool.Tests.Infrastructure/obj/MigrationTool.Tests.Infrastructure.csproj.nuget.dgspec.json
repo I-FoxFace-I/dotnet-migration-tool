@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj": {}
+    "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+    "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
         "projectName": "MigrationTool.Core.Abstractions",
-        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj",
         "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\obj\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\obj\\",
         "projectStyle": "PackageReference",
         "centralPackageVersionsManagementEnabled": true,
         "fallbackFolders": [
@@ -19,7 +19,7 @@
           "C:\\Program Files (x86)\\Progress\\ToolboxNuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\NuGet.Config",
+          "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\NuGet.Config",
           "C:\\Users\\mrmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
@@ -30,7 +30,7 @@
         ],
         "sources": {
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\nuget-local": {},
+          "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\nuget-local": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,6 +65,7 @@
             "Microsoft.AspNetCore.Components.Web": "9.0.0",
             "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
             "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.Build.Locator": "1.7.8",
             "Microsoft.CodeAnalysis.CSharp": "4.12.0",
             "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
             "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
@@ -79,6 +80,8 @@
             "Microsoft.NET.Test.Sdk": "17.12.0",
             "Moq": "4.20.72",
             "MudBlazor": "7.14.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Text.Json": "9.0.0",
             "Wpf.Framework": "1.0.0-local",
             "Wpf.Services.MicrosoftDI": "1.0.0",
             "xunit": "2.9.2",
@@ -104,14 +107,14 @@
         }
       }
     },
-    "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj": {
+    "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj",
         "projectName": "MigrationTool.Tests.Infrastructure",
-        "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\MigrationTool.Tests.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\mrmar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\tests\\MigrationTool\\MigrationTool.Tests.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "centralPackageVersionsManagementEnabled": true,
         "fallbackFolders": [
@@ -139,8 +142,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
-                "projectPath": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj"
+              "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj": {
+                "projectPath": "C:\\Users\\mrmar\\source\\repos\\dotnet-migration-tool\\src\\MigrationTool\\MigrationTool.Core.Abstractions\\MigrationTool.Core.Abstractions.csproj"
               }
             }
           }
@@ -171,6 +174,7 @@
             "Microsoft.AspNetCore.Components.Web": "9.0.0",
             "Microsoft.AspNetCore.Components.WebAssembly": "9.0.0",
             "Microsoft.AspNetCore.Components.WebView.Maui": "9.0.0",
+            "Microsoft.Build.Locator": "1.7.8",
             "Microsoft.CodeAnalysis.CSharp": "4.12.0",
             "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.12.0",
             "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.12.0",
@@ -185,6 +189,8 @@
             "Microsoft.NET.Test.Sdk": "17.12.0",
             "Moq": "4.20.72",
             "MudBlazor": "7.14.0",
+            "System.CommandLine": "2.0.0-beta4.22272.1",
+            "System.Text.Json": "9.0.0",
             "Wpf.Framework": "1.0.0-local",
             "Wpf.Services.MicrosoftDI": "1.0.0",
             "xunit": "2.9.2",

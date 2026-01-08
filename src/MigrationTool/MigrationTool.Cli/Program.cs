@@ -18,13 +18,27 @@ public class Program
         var rootCommand = new RootCommand("MigrationTool CLI - .NET helper for Python MigrationTool");
 
         // Register all commands
+        
+        // Solution & Project commands
         rootCommand.AddCommand(AnalyzeSolutionCommand.Create());
-        rootCommand.AddCommand(UpdateNamespaceCommand.Create());
+        rootCommand.AddCommand(UpdateSolutionCommand.Create());
         rootCommand.AddCommand(UpdateProjectRefsCommand.Create());
         rootCommand.AddCommand(FindUsagesCommand.Create());
+        
+        // Folder commands
         rootCommand.AddCommand(MoveFolderCommand.Create());
         rootCommand.AddCommand(CopyFolderCommand.Create());
-        rootCommand.AddCommand(UpdateSolutionCommand.Create());
+        rootCommand.AddCommand(DeleteFolderCommand.Create());
+        
+        // File commands
+        rootCommand.AddCommand(MoveFileCommand.Create());
+        rootCommand.AddCommand(CopyFileCommand.Create());
+        rootCommand.AddCommand(DeleteFileCommand.Create());
+        rootCommand.AddCommand(RenameFileCommand.Create());
+        rootCommand.AddCommand(UpdateNamespaceCommand.Create());
+        
+        // Cross-solution migration
+        rootCommand.AddCommand(CrossSolutionMigrateCommand.Create());
 
         return await rootCommand.InvokeAsync(args);
     }

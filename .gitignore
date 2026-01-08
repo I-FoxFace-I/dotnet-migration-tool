@@ -1,9 +1,10 @@
-# Build outputs
+# Build outputs (centralized in .build folder)
 [Oo]bj/
 [Bb]in/
 [Dd]ebug/
 [Rr]elease/
 build/
+.build/
 
 # Build output files
 **/build_output.txt
