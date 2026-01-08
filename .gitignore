@@ -1,0 +1,61 @@
+# Build outputs
+[Oo]bj/
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+build/
+
+# Build output files
+**/build_output.txt
+**/test_output*.txt
+**/*.info
+output.txt
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Visual Studio Code
+.vscode/
+
+# Cursor
+.cursor/
+
+# Rider
+.idea/
+
+# Test results
+TestResults/
+*.trx
+
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+# NuGet
+*.nupkg
+nuget-local/*.nupkg
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Python cache (for Python tools)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.zip
+*.rar
