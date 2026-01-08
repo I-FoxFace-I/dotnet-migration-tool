@@ -39,6 +39,10 @@ public class Program
         
         // Cross-solution migration
         rootCommand.AddCommand(CrossSolutionMigrateCommand.Create());
+        
+        // Graph analysis commands
+        rootCommand.AddCommand(AnalyzeGraphCommand.Create());
+        rootCommand.AddCommand(AnalyzeImpactCommand.Create());
 
         return await rootCommand.InvokeAsync(args);
     }

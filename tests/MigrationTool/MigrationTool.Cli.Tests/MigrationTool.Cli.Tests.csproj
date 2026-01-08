@@ -8,8 +8,19 @@
     <IsTestProject>true</IsTestProject>
     <RootNamespace>MigrationTool.Cli.Tests</RootNamespace>
     <!-- Use runsettings for test configuration -->
-    <RunSettingsFilePath>$(MSBuildThisFileDirectory)..\test.runsettings</RunSettingsFilePath>
+    <RunSettingsFilePath>$(MSBuildThisFileDirectory)..\..\test.runsettings</RunSettingsFilePath>
+    <!-- Path to test fixtures directory -->
+    <TestFixturesDir>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\..\datasets\test-fixtures'))</TestFixturesDir>
   </PropertyGroup>
+
+  <!-- Clean extracted test fixtures before running tests -->
+  <Target Name="CleanTestFixtures" BeforeTargets="VSTest">
+    <Message Importance="high" Text="Cleaning test fixtures in $(TestFixturesDir)..." />
+    <ItemGroup>
+      <TestFixtureDirs Include="$(TestFixturesDir)\*" Exclude="$(TestFixturesDir)\*.zip" />
+    </ItemGroup>
+    <RemoveDir Directories="@(TestFixtureDirs)" />
+  </Target>
 
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />

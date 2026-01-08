@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MigrationTool.Core.Abstractions.Graph;
 using MigrationTool.Core.Abstractions.Services;
 using MigrationTool.Core.Analyzers;
+using MigrationTool.Core.Graph;
 using MigrationTool.Core.Services;
 
 namespace MigrationTool.Core.DependencyInjection;
@@ -28,6 +30,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMigrationExecutor, MigrationExecutor>();
         services.AddSingleton<IMigrationPlanner, MigrationPlanner>();
 
+        // Graph services
+        services.AddSingleton<ISolutionGraphBuilder, SolutionGraphBuilder>();
+        services.AddSingleton<IImpactAnalyzer, ImpactAnalyzer>();
+
         return services;
     }
 
@@ -47,6 +53,10 @@ public static class ServiceCollectionExtensions
         // Migration services
         services.AddSingleton<IMigrationExecutor, MigrationExecutor>();
         services.AddSingleton<IMigrationPlanner, MigrationPlanner>();
+
+        // Graph services
+        services.AddSingleton<ISolutionGraphBuilder, SolutionGraphBuilder>();
+        services.AddSingleton<IImpactAnalyzer, ImpactAnalyzer>();
 
         return services;
     }
