@@ -21,16 +21,33 @@ SRC_FOLDERS = [
     "MigrationTool.Cli",
     "MigrationTool.Core",
     "MigrationTool.Core.Abstractions",
+    "MigrationTool.Core.Extensions",
+    "MigrationTool.Core.Abstractions",
+    "MigrationTool.Blazor.Server",
+    "MigrationTool.Maui",
+    "MigrationTool.Wpf",
 ]
 
 # Folders to sync from tests/MigrationTool
 TEST_FOLDERS = [
     "MigrationTool.Cli.Tests",
+    "MigrationTool.Core.Tests",
+    "MigrationTool.Core.Extensions.Tests",
+    "MigrationTool.Core.Abstractions.Tests",
+    "MigrationTool.Blazor.Server.Tests",
+    "MigrationTool.Maui.Tests",
+    "MigrationTool.Wpf.Tests",
+    "MigrationTool.TestUtilities",
 ]
 
 # Additional directories to sync (from tools root)
 ADDITIONAL_DIRS = [
+    ("src\MigrationTool", "src\MigrationTool"),  # Copy Analyzers/ folder
+    ("tests\MigrationTool", "tests\MigrationTool"),  # Copy test utilities
     ("scripts", "scripts"),  # Copy scripts/ folder
+    ("frontend", "frontend"),  # Copy frontend/ folder
+    ("..\datasets", "datasets"),  # Copy datasets/ folder
+    # ("..\src\Utils", "utils")  # Copy utils/ folder
 ]
 
 # Files to exclude
