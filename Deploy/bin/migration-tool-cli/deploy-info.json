@@ -1,9 +1,0 @@
-{
-  "version": "1.0.0",
-  "configuration": "Release",
-  "platform": "CLI Tool",
-  "build_date": "2026-01-06T20:41:46.860393",
-  "output_path": "C:\\Users\\mrmar\\source\\repos\\Sandbox\\Autofac\\tools\\Deploy\\bin\\migration-tool-cli",
-  "executable": "migration-tool-cli.exe",
-  "self_contained": false
-}
